@@ -1,0 +1,3 @@
+config BOARD_REFORM
+    bool "MNT Reform Keyboard 4.0"
+    depends on SOC_RP2040

@@ -1,0 +1,9 @@
+if BOARD_REFORM
+
+config ZMK_KEYBOARD_NAME
+    default "MNT Reform KB"
+
+config RP2_FLASH_W25Q080
+    default y
+
+endif # BOARD_REFORM

@@ -1,0 +1,10 @@
+file_format: "1"
+id: reform
+name: MNT Reform Keyboard 4.0
+type: board
+arch: arm
+features:
+  - keys
+outputs:
+  - usb
+url: https://mntre.com/
