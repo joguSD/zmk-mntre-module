@@ -17,7 +17,7 @@ CONFIG_BUILD_OUTPUT_UF2=y
 CONFIG_ZMK_USB=y
 
 # Enable Display
-CONFIG_ZMK_DISPLAY=y
+CONFIG_ZMK_DISPLAY=n
 
 # Turn on logging, and set ZMK logging to debug output
 #CONFIG_LOG=y
