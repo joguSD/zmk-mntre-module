@@ -19,6 +19,10 @@ CONFIG_ZMK_USB=y
 # Enable Display
 CONFIG_ZMK_DISPLAY=n
 
+# Enable RGB
+CONFIG_ZMK_RGB_UNDERGLOW=y
+CONFIG_WS2812_STRIP=y
+
 # Turn on logging, and set ZMK logging to debug output
 #CONFIG_LOG=y
 #CONFIG_LOG_PROCESS_THREAD_STARTUP_DELAY_MS=8000
