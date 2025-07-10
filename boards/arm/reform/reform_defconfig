@@ -16,4 +16,8 @@ CONFIG_USE_DT_CODE_PARTITION=y
 # Output UF2 by default, native bootloader supports it.
 CONFIG_BUILD_OUTPUT_UF2=y
 
+# Enable USB
 CONFIG_ZMK_USB=y
+
+# Enable Display
+CONFIG_ZMK_DISPLAY=y

@@ -5,6 +5,7 @@ type: board
 arch: arm
 features:
   - keys
+  - display
 outputs:
   - usb
 url: https://mntre.com/
