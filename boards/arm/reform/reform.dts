@@ -141,6 +141,12 @@ zephyr_udc0: &usbd {
 };
 
 
+&vreg {
+    regulator-always-on;
+    regulator-allowed-modes = <REGULATOR_RPI_PICO_MODE_NORMAL>;
+};
+
+
 &i2c0 {
       status = "okay";
       pinctrl-0 = <&i2c0_default>;
