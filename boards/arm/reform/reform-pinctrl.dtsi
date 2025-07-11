@@ -4,9 +4,12 @@
 &pinctrl {
     i2c0_default: i2c0_default {
         group1 {
-            pinmux = <I2C0_SDA_P0>, <I2C0_SCL_P1>;
+            pinmux = <I2C0_SDA_P0>;
             input-enable;
-            input-schmitt-enable;
+        };
+        group2 {
+            pinmux = <I2C0_SCL_P1>;
+            input-enable;
         };
     };
 
