@@ -10,6 +10,16 @@
         };
     };
 
+    uart1_default: uart1_default {
+        group1 {
+            pinmux = <UART1_TX_P4>;
+        };
+        group2 {
+            pinmux = <UART1_RX_P5>;
+            input-enable;
+        };
+    };
+
     ws2812_pio0_default: ws2812_pio0_default {
         ws2812 {
             pinmux = <PIO0_P24>;
