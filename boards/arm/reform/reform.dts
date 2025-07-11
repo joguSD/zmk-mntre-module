@@ -133,6 +133,14 @@ zephyr_udc0: &usbd {
 };
 
 
+&uart1 {
+    current-speed = <115200>;
+    status = "disabled";
+    pinctrl-0 = <&uart1_default>;
+    pinctrl-names = "default";
+};
+
+
 &i2c0 {
       status = "okay";
       pinctrl-0 = <&i2c0_default>;
