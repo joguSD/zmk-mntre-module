@@ -3,7 +3,7 @@
 #include <rpi_pico/rp2040.dtsi>
 #include <dt-bindings/led/led.h>
 #include <dt-bindings/zmk/matrix_transform.h>
-#include <zephyr/dt-bindings/pinctrl/rpi-pico-rp2040-pinctrl.h>
+#include "reform-pinctrl.dtsi"
 
 / {
 
@@ -119,23 +119,6 @@
 
 zephyr_udc0: &usbd {
   status = "okay";
-};
-
-
-&pinctrl {
-    i2c0_default: i2c0_default {
-        group1 {
-            pinmux = <I2C0_SDA_P0>, <I2C0_SCL_P1>;
-            input-enable;
-            input-schmitt-enable;
-        };
-    };
-
-    ws2812_pio0_default: ws2812_pio0_default {
-        ws2812 {
-            pinmux = <PIO0_P24>;
-        };
-    };
 };
 
 

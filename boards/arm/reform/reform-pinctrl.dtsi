@@ -1,0 +1,18 @@
+#include <zephyr/dt-bindings/pinctrl/rpi-pico-rp2040-pinctrl.h>
+
+
+&pinctrl {
+    i2c0_default: i2c0_default {
+        group1 {
+            pinmux = <I2C0_SDA_P0>, <I2C0_SCL_P1>;
+            input-enable;
+            input-schmitt-enable;
+        };
+    };
+
+    ws2812_pio0_default: ws2812_pio0_default {
+        ws2812 {
+            pinmux = <PIO0_P24>;
+        };
+    };
+};
