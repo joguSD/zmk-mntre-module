@@ -19,6 +19,10 @@
         zmk,underglow = &led_strip;
     };
 
+    aliases {
+        watchdog0 = &wdt0;
+    };
+
     xtal_clk: xtal-clk {
         compatible = "fixed-clock";
         clock-frequency = <12000000>;
@@ -115,6 +119,11 @@
 */
 
 &gpio0 {
+    status = "okay";
+};
+
+
+&wdt0 {
     status = "okay";
 };
 
