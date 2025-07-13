@@ -2,11 +2,6 @@ CONFIG_SOC_SERIES_RP2XXX=y
 CONFIG_SOC_RP2040=y
 CONFIG_BOARD_REFORM=y
 
-# Set to "n" for bus-powered devices because the default is "y".
-CONFIG_USB_SELF_POWERED=n
-# Maximum Power Consumption in 2mA units (250 -> 500mA)
-CONFIG_USB_MAX_POWER=250
-
 CONFIG_SYS_CLOCK_HW_CYCLES_PER_SEC=125000000
 
 # Enable reset by default
@@ -21,6 +16,12 @@ CONFIG_BUILD_OUTPUT_UF2=y
 # Enable USB
 CONFIG_ZMK_USB=y
 CONFIG_USB_HID_POLL_INTERVAL_MS=5
+# Set to "n" for bus-powered devices because the default is "y".
+CONFIG_USB_SELF_POWERED=n
+# Maximum Power Consumption in 2mA units (50 -> 100mA)
+CONFIG_USB_MAX_POWER=50
+CONFIG_USB_DEVICE_REMOTE_WAKEUP=y
+
 
 CONFIG_ZMK_WPM=y
 
