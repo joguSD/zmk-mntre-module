@@ -173,13 +173,13 @@ zephyr_udc0: &usbd {
 };
 
 
-&pio0 {
+&pio1 {
     status = "okay";
 
     pio-ws2812 {
         status = "okay";
         compatible = "worldsemi,ws2812-rpi_pico-pio";
-        pinctrl-0 = <&ws2812_pio0_default>;
+        pinctrl-0 = <&ws2812_pio1_default>;
         pinctrl-names = "default";
         bit-waveform = <3>, <3>, <4>;
 
