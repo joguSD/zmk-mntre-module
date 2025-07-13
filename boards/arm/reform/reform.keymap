@@ -35,14 +35,14 @@
         // CIRCLE + HYPER + R = &sys_reset
         combo_bootloader {
             timeout-ms = <100>;
-            key-positions = <13 32 70>;
+            key-positions = <13 32 69>;
             bindings = <&sys_reset>;
         };
 
         // CIRCLE + HYPER + X = &bootloader
         combo_sys_reset {
             timeout-ms = <100>;
-            key-positions = <13 59 70>;
+            key-positions = <13 58 69>;
             bindings = <&bootloader>;
         };
     };

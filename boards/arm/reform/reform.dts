@@ -8,6 +8,8 @@
 / {
 
     chosen {
+        zephyr,console = &uart1;
+        zephyr,shell-uart = &uart1;
         zephyr,sram = &sram0;
         zephyr,flash = &flash0;
         zephyr,flash-controller = &ssi;
@@ -135,7 +137,7 @@ zephyr_udc0: &usbd {
 
 &uart1 {
     current-speed = <115200>;
-    status = "disabled";
+    status = "okay";
     pinctrl-0 = <&uart1_default>;
     pinctrl-names = "default";
 };
