@@ -1,0 +1,2 @@
+config BOARD_REFORM
+    select RP2_FLASH_W25Q080

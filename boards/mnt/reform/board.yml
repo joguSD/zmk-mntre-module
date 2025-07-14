@@ -1,0 +1,6 @@
+board:
+  name: reform
+  full_name: Reform
+  vendor: mnt
+  socs:
+  - name: rp2040

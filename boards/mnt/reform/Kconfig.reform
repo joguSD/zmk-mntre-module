@@ -1,0 +1,2 @@
+config BOARD_REFORM
+    select SOC_RP2040

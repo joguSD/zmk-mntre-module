@@ -1,6 +1,6 @@
 /dts-v1/;
 
-#include <rpi_pico/rp2040.dtsi>
+#include <raspberrypi/rpi_pico/rp2040.dtsi>
 #include <dt-bindings/led/led.h>
 #include <dt-bindings/zmk/matrix_transform.h>
 #include "reform-pinctrl.dtsi"
@@ -23,12 +23,6 @@
 
     aliases {
         watchdog0 = &wdt0;
-    };
-
-    xtal_clk: xtal-clk {
-        compatible = "fixed-clock";
-        clock-frequency = <12000000>;
-        #clock-cells = <0>;
     };
 
     default_transform: keymap_transform_0 {
@@ -114,11 +108,9 @@
     };
 };
 
-/* should be some way to set this
 &xosc {
     startup-delay-multiplier = <64>;
 };
-*/
 
 &gpio0 {
     status = "okay";
@@ -153,7 +145,7 @@ zephyr_udc0: &usbd {
       status = "okay";
       pinctrl-0 = <&i2c0_default>;
       pinctrl-names = "default";
-      clock-frequency = <I2C_BITRATE_STANDARD>;
+      clock-frequency = <I2C_BITRATE_FAST>;
 
       oled: ssd1306@3c {
           compatible = "solomon,ssd1306fb";
@@ -173,13 +165,13 @@ zephyr_udc0: &usbd {
 };
 
 
-&pio1 {
+&pio0 {
     status = "okay";
 
     pio-ws2812 {
         status = "okay";
         compatible = "worldsemi,ws2812-rpi_pico-pio";
-        pinctrl-0 = <&ws2812_pio1_default>;
+        pinctrl-0 = <&ws2812_pio0_default>;
         pinctrl-names = "default";
         bit-waveform = <3>, <3>, <4>;
 
