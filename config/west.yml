@@ -4,14 +4,16 @@ manifest:
       url-base: https://github.com/zmkfirmware
     - name: joguSD
       url-base: https://github.com/joguSD
+    - name: petejohanson
+      url-base: https://github.com/petejohanson
   projects:
     - name: zmk
-      revision: main
-      remote: zmkfirmware
+      remote: petejohanson
+      revision: core/move-to-zephyr-4-1
       import: app/west.yml
     - name: zephyr
-      remote: joguSD
-      revision: v3.5.0+zmk-fixes
+      remote: petejohanson
+      revision: v4.1.0+zmk-fixes
       clone-depth: 1
       import:
         name-blocklist:
