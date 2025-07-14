@@ -29,8 +29,8 @@
 // GRAVE(14) N1(15)    N2(16)    N3(17)    N4(18)    N5(19)    N6(20)    N7(21)    N8(22)    N9(23)    N0(24)    MINUS(25) EQUAL(26) BSPC(27)
 // TAB(28)   Q(29)     W(30)     E(31)     R(32)     T(33)     Y(34)     U(35)     I(36)     O(37)     P(38)     LBRC(39)  RBRC(40)  BSLS(41)
 // ECTRL(42) A(43)     S(44)     D(45)     F(46)     G(47)     H(48)     J(49)     K(50)     L(51)     SCLN(52)  QUOTE(53) ENTER(54)
-// LSFT(56)  LSFT(57)  Z(58)     X(59)     C(60)     V(61)     B(62)     N(63)     M(64)     COMMA(65) DOT(66)   SLASH(67) UP(68)    RSFT(69)
-// HYPER(70) LGUI(71)  LALT(72)  SPACE(73) SPACE(74)           SPACE(76) RALT(77)  RCTL(78)  LEFT(79)  DOWN(80)  RIGHT(81)
+// LSFT(55)  LSFT(56)  Z(57)     X(58)     C(59)     V(60)     B(61)     N(62)     M(63)     COMMA(64) DOT(65)   SLASH(66) UP(67)    RSFT(68)
+// HYPER(69) LGUI(70)  LALT(71)  SPACE(72) SPACE(73)           SPACE(74) RALT(75)  RCTL(76)  LEFT(77)  DOWN(78)  RIGHT(79)
 
 
 / {
@@ -103,7 +103,7 @@
                 &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans
                 &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans
                 &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans
-                &trans    &trans    &trans    &bootloader &trans  &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans
+                &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans
                 &trans    &trans    &trans    &trans    &trans              &trans    &trans    &trans    &trans    &trans    &trans
             >;
         };
