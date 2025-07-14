@@ -1,3 +1,7 @@
+/*
+  SPDX-License-Identifier: GPL-3.0-or-later
+  Copyright 2025 joguSD
+*/
 /dts-v1/;
 
 #include <raspberrypi/rpi_pico/rp2040.dtsi>

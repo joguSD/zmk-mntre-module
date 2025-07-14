@@ -1,2 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright 2025 joguSD
+
 config BOARD_REFORM
     select SOC_RP2040

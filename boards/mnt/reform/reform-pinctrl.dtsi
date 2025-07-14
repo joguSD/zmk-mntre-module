@@ -1,3 +1,8 @@
+/*
+  SPDX-License-Identifier: GPL-3.0-or-later
+  Copyright 2025 joguSD
+*/
+
 #include <zephyr/dt-bindings/pinctrl/rpi-pico-rp2040-pinctrl.h>
 
 

@@ -62,3 +62,7 @@ sudo minicom -D /dev/ttyACM1 -b 11520
 * [Official Firmware Source](https://source.mnt.re/reform/reform/-/tree/master/reform2-keyboard4-fw?ref_type=heads)
 * [Keyboard PCB Source](https://source.mnt.re/reform/reform/-/tree/master/reform2-keyboard4-pcb?ref_type=heads)
 * [Keyboard Schematic](https://mntre.com/documentation/reform-handbook/schematics.html#keyboard-schematics)
+
+## License
+
+SPDX-License-Identifier: GPL-3.0-or-later
