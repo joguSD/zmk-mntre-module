@@ -17,7 +17,7 @@ config USB_SELF_POWERED
     default n
 
 config USB_MAX_POWER
-    default 50
+    default 250
 
 config USB_DEVICE_REMOTE_WAKEUP
     default y
