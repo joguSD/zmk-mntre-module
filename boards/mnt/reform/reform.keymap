@@ -5,9 +5,20 @@
 
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/rgb.h>
 
 #define BASE  0
 #define HYPER 1
+
+#define RGBTOG  &rgb_ug RGB_TOG
+#define RGBHUI  &rgb_ug RGB_HUI
+#define RGBHUD  &rgb_ug RGB_HUD
+#define RGBSAI  &rgb_ug RGB_SAI
+#define RGBSAD  &rgb_ug RGB_SAD
+#define RGBBRI  &rgb_ug RGB_BRI
+#define RGBBRD  &rgb_ug RGB_BRD
+#define RGBEFF  &rgb_ug RGB_EFF
+
 
 // ---------- Reform key switch positions ----------
 //
@@ -85,7 +96,7 @@
         hyper {
             // Layer 1 HYPER
             // -------------------------------------------------------------------------------------------------------
-            // | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | -------- |
+            // | RTOG | RBRD | RBRI | RHUD | RHUI | RSAD | RSAI | REFF | ---- | ---- | ---- | ---- | ---- | -------- |
             // -------------------------------------------------------------------------------------------------------
             // | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | -------- |
             // -------------------------------------------------------------------------------------------------------
@@ -99,7 +110,7 @@
             // -------------------------------------------------------------------------------------------------------
             display-name = "Hyper";
             bindings = <
-                &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans
+                RGBTOG    RGBBRD    RGBBRI    RGBHUD    RGBHUI    RGBSAD    RGBSAI    RGBEFF    &trans    &trans    &trans    &trans    &trans    &trans
                 &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans
                 &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans
                 &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans
