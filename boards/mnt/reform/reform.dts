@@ -102,7 +102,7 @@
         #address-cells = <1>;
         #size-cells = <1>;
 
-        /* Reserved memory for the second stage bootloader */
+        /* First 0x100 bytes reserved memory for the second stage bootloader */
         second_stage_bootloader: partition@0 {
             reg = <0x00000000 0x100>;
             read-only;
@@ -110,11 +110,16 @@
 
         /*
          * Usable flash. Starts at 0x100, after the bootloader. The partition
-         * size is 4MB minus the 0x100 bytes taken by the bootloader.
-         */
+         * size is 4MB minus the 0x100 bytes taken by the bootloader, and 512K
+         * for a storage partition that's used to save settings. */
         code_partition: partition@100 {
-            reg = <0x100 (DT_SIZE_M(4) - 0x100)>;
+            reg = <0x100 (DT_SIZE_M(4) - 0x100 - DT_SIZE_K(512))>;
             read-only;
+        };
+
+        /* Reserve last 512KB for storage (4MB - 512KB = 0x380000) offset */
+        storage_partition: partition@380000 {
+            reg = <0x380000 DT_SIZE_K(512)>;
         };
     };
 };
