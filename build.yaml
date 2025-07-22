@@ -5,14 +5,12 @@
 # pass flags to the build command, `snippet` to add a Zephyr snippet, and
 # `artifact-name` to assign a name to distinguish build outputs from each other:
 #
-board: [ "reform" ]
+# board: [ "reform" ]
 # shield: [ "corne_left", "corne_right" ]
-# include:
-#   - board: bdn9_rev2
-#   - board: nice_nano_v2
-#     shield: reviung41
-#   - board: nice_nano_v2
-#     shield: corne_left
-#     snippet: studio-rpc-usb-uart
-#     cmake-args: -DCONFIG_ZMK_STUDIO=y
-#     artifact-name: corne_left_with_studio
+include:
+  - board: reform
+    artifact-name: reform_zmk
+  - board: reform
+    snippet: studio-rpc-usb-uart
+    cmake-args: -DCONFIG_ZMK_STUDIO=y
+    artifact-name: reform_zmk_studio

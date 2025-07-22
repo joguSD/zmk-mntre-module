@@ -6,6 +6,8 @@ arch: arm
 features:
   - keys
   - display
+  - underglow
+  - studio
 outputs:
   - usb
 url: https://mntre.com/

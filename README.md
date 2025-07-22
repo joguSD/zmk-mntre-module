@@ -48,6 +48,12 @@ In the future, I hope to implement full support for the laptop usecase as well.
 west build -p -b reform -- -DZMK_EXTRA_MODULES=/some/path/zmk-mntre-module
 ```
 
+With ZMK Studio support enabled:
+
+```
+west build -p -b reform -S studio-rpc-usb-uart -- -DZMK_EXTRA_MODULES="/home/jogu/projects/zmk-mntre-module" -DCONFIG_ZMK_STUDIO=y
+```
+
 ## Debugging
 
 * Currently, the UART port normally used for the system controller communication is being used as a UART console.

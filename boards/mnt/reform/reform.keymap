@@ -61,6 +61,13 @@
             key-positions = <13 58 69>;
             bindings = <&bootloader>;
         };
+
+        // CIRCLE + HYPER + U = &studio_unlock
+        combo_studio_unlock {
+            timeout-ms = <100>;
+            key-positions = <13 35 69>;
+            bindings = <&studio_unlock>;
+        };
     };
 
 
