@@ -13,7 +13,7 @@ In the future, I hope to implement full support for the laptop usecase as well.
 **The USB HID is currently unstable and will crash often making the keyboard unresponsive to the host**
 
 * If this happens, the keyboard can be reset by pressing `CIRCLE + HYPER + R`
-* **Broken after 4.1 migration** - The keyboard can be putting flashing mode by pressing `CIRCLE + HYPER + X`
+* The keyboard can be putting flashing mode by pressing `CIRCLE + HYPER + X`
 
 ## Functional
 * Reform device tree and pinctrl

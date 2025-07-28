@@ -12,7 +12,7 @@ manifest:
       revision: core/move-to-zephyr-4-1
       import: app/west.yml
     - name: zephyr
-      remote: petejohanson
+      remote: joguSD
       revision: v4.1.0+zmk-fixes
       clone-depth: 1
       import:
