@@ -8,6 +8,8 @@ Initially, I aim to get all of the hardware working under ZMK and support the st
 
 In the future, I hope to implement full support for the laptop usecase as well.
 
+![ZMK Studio Screenshot](https://github.com/user-attachments/assets/8b30a9c6-927b-4d7e-b47d-196373f5c54a)
+
 # Status
 
 **The USB HID is currently unstable and will crash often making the keyboard unresponsive to the host**
@@ -19,13 +21,12 @@ In the future, I hope to implement full support for the laptop usecase as well.
 * Reform device tree and pinctrl
 * Keyboard matrix and function layers
 * RGB - WS2812 driver on PIO0
+* Settings saving & loading
+* Physical keyboard layout definition
+* ZMK Studio Support
 
 ## Borked
 * Enabling the I2C SSD1306 OLED display causes a hard fault
-
-## Planned
-* Physical keyboard layout definition
-* ZMK Studio Support
 
 ## No plan yet
 * Trackball, Trackpad support
