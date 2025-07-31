@@ -8,8 +8,8 @@
 # board: [ "reform" ]
 # shield: [ "corne_left", "corne_right" ]
 include:
-  - board: reform
-    artifact-name: reform_zmk
+  # - board: reform
+  #   artifact-name: reform_zmk
   - board: reform
     snippet: studio-rpc-usb-uart
     cmake-args: -DCONFIG_ZMK_STUDIO=y
