@@ -74,11 +74,12 @@ void initialize_display(struct k_work *work) {
     }
 
     clear_buffer();
+    memcpy(display_buffer, logo, BUFFER_SIZE);
     show_buffer();
     display_blanking_off(display);
 
-    k_timer_start(&display_timer, K_MSEC(DISPLAY_TICK_PERIOD_MS),
-            K_MSEC(DISPLAY_TICK_PERIOD_MS));
+    //k_timer_start(&display_timer, K_MSEC(DISPLAY_TICK_PERIOD_MS),
+    //        K_MSEC(DISPLAY_TICK_PERIOD_MS));
 
     LOG_INF("Reform Display Initialized!");
 }
