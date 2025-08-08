@@ -12,6 +12,9 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
+#include <zmk/event_manager.h>
+#include <zmk/events/activity_state_changed.h>
+
 #define DISPLAY_THREAD_PRIORITY 5
 #define DISPLAY_THREAD_STACK_SIZE 2045
 #define DISPLAY_TICK_PERIOD_MS 100
@@ -98,3 +101,27 @@ static int reform_display_init(void) {
 }
 
 SYS_INIT(reform_display_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
+
+int display_event_handler(const zmk_event_t *eh) {
+    struct zmk_activity_state_changed *ev = as_zmk_activity_state_changed(eh);
+    if (ev == NULL) {
+        return -ENOTSUP;
+    }
+
+    switch (ev->state) {
+    case ZMK_ACTIVITY_ACTIVE:
+        display_blanking_off(display);
+        break;
+    case ZMK_ACTIVITY_IDLE:
+    case ZMK_ACTIVITY_SLEEP:
+        display_blanking_on(display);
+        break;
+    default:
+        LOG_WRN("Unhandled activity state: %d", ev->state);
+        return -EINVAL;
+    }
+    return 0;
+}
+
+ZMK_LISTENER(reform_display, display_event_handler);
+ZMK_SUBSCRIPTION(reform_display, zmk_activity_state_changed);
