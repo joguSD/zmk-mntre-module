@@ -6,7 +6,7 @@
 #include <zephyr/kernel.h>
 
 #include <zephyr/device.h>
-#include <zephyr/display/cfb.h>
+#include <zephyr/drivers/display.h>
 #include <stdio.h>
 
 #include <zephyr/logging/log.h>
@@ -16,19 +16,38 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 #define DISPLAY_THREAD_STACK_SIZE 2045
 #define DISPLAY_TICK_PERIOD_MS 100
 
+#define DISPLAY_WIDTH 128
+#define DISPLAY_HEIGHT 32
+#define BUFFER_SIZE DISPLAY_WIDTH * DISPLAY_HEIGHT / 8
+
 static const struct device *display = DEVICE_DT_GET(DT_CHOSEN(zephyr_display));
+static struct display_buffer_descriptor desc = {
+    .buf_size = BUFFER_SIZE,
+    .width = DISPLAY_WIDTH,
+    .height = DISPLAY_HEIGHT,
+    .pitch = DISPLAY_WIDTH,
+};
+static uint8_t logo[BUFFER_SIZE] = {
+    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,128,128,128,128,128,128,192, 64,128,  0,  0,  0,  0,  0,  0,  0,  0,  0,128,  0,  0,  0,  0,  0,  0,  0,  0,  0,128,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 14,249, 65, 65, 64, 96, 32, 32, 32, 32, 32, 32, 63,240,  0,  0,  0,  0,  0,  0,  0,  0,  1,  3,  6, 12,  0,  0,  0,  0,  0,192,127,  0,  0,  0,  8, 12,  6,  3,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 
+    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,128,112, 31,  8,  4,  4,  4,  4,  4,  6,  2,  2,  2,  2,253,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,  1,129,193, 97, 61,  7,  1,  1,  1,  1,255,153,  1,  1,  1,  1,  1,129,129,192,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 
+    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  2,  3,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  3,  2,  2,  6,  3,  0,  0,  0,  0,  0,  0,  0,  0,  2,  3,  1,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,  1,  1,  1,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+};
+static uint8_t display_buffer[BUFFER_SIZE];
+
+void clear_buffer() {
+    memset(display_buffer, 0, BUFFER_SIZE);
+}
+
+int show_buffer() {
+    const struct display_driver_api *api = display->api;
+    return api->write(display, 0, 0, &desc, display_buffer);
+}
 
 void display_tick_cb(struct k_work *work) {
-    cfb_framebuffer_clear(display, false);
-
-    int32_t uptime = k_uptime_get();
-    char uptime_str[16];
-    sprintf(uptime_str, "%d", uptime);
-
-    cfb_print(display, "MNT REFORM", 0, 0);
-    cfb_print(display, uptime_str, 0, 16);
-
-    cfb_framebuffer_finalize(display);
+    clear_buffer();
+    memcpy(display_buffer, logo, BUFFER_SIZE);
+    show_buffer();
 }
 
 K_WORK_DEFINE(display_tick_work, display_tick_cb);
@@ -49,20 +68,13 @@ void initialize_display(struct k_work *work) {
         return;
     }
 
-    if (display_set_pixel_format(display, PIXEL_FORMAT_MONO10) != 0) {
-        if (display_set_pixel_format(display, PIXEL_FORMAT_MONO01) != 0) {
-            LOG_ERR("Failed to set required pixel format");
-            return;
-        }
-    }
-
-    if (cfb_framebuffer_init(display)) {
-        LOG_ERR("Framebuffer initialization failed!");
+    if (display_set_pixel_format(display, PIXEL_FORMAT_MONO01) != 0) {
+        LOG_ERR("Failed to set required pixel format");
         return;
     }
 
-    cfb_framebuffer_clear(display, true);
-
+    clear_buffer();
+    show_buffer();
     display_blanking_off(display);
 
     k_timer_start(&display_timer, K_MSEC(DISPLAY_TICK_PERIOD_MS),
