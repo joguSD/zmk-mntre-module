@@ -21,12 +21,11 @@ In the future, I hope to implement full support for the laptop usecase as well.
 * Reform device tree and pinctrl
 * Keyboard matrix and function layers
 * RGB - WS2812 driver on PIO0
+* Display - Custom Display Code
+    * does not use ZMK's display widgets
 * Settings saving & loading
 * Physical keyboard layout definition
 * ZMK Studio Support
-
-## Borked
-* Enabling the I2C SSD1306 OLED display causes a hard fault
 
 ## No plan yet
 * Trackball, Trackpad support
