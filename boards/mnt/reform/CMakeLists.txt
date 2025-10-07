@@ -1,5 +1,4 @@
 zephyr_library()
-zephyr_library_sources(bootloader_fix.c)
 #if(CONFIG_DISPLAY)
 zephyr_library_sources(reform_display.c)
 #endif()

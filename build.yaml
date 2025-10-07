@@ -11,6 +11,6 @@ include:
   # - board: reform
   #   artifact-name: reform_zmk
   - board: reform
-    snippet: studio-rpc-usb-uart
+    snippet: rp2-boot-mode-retention studio-rpc-usb-uart
     cmake-args: -DCONFIG_ZMK_STUDIO=y
     artifact-name: reform_zmk_studio
