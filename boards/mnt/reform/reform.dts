@@ -15,7 +15,6 @@
     transform = <&default_transform>;
 };
 
-
 / {
 
     chosen {
@@ -93,7 +92,6 @@
     };
 };
 
-
 &flash0 {
     reg = <0x10000000 DT_SIZE_M(4)>;
 
@@ -132,30 +130,34 @@
     status = "okay";
 };
 
-
 &wdt0 {
     status = "okay";
 };
 
-
 zephyr_udc0: &usbd {
-  status = "okay";
+    status = "okay";
 };
 
-
 &uart1 {
-    current-speed = <115200>;
     status = "okay";
+    current-speed = <115200>;
     pinctrl-0 = <&uart1_default>;
     pinctrl-names = "default";
 };
 
+&timer {
+    status = "okay";
+};
+
+&rtc {
+    status = "okay";
+    clocks = <&clocks RPI_PICO_CLKID_CLK_RTC>;
+};
 
 &vreg {
     regulator-always-on;
     regulator-allowed-modes = <REGULATOR_RPI_PICO_MODE_NORMAL>;
 };
-
 
 &i2c0 {
       status = "okay";
@@ -179,7 +181,6 @@ zephyr_udc0: &usbd {
           prechargep = <0x22>;
       };
 };
-
 
 &pio0 {
     status = "okay";
