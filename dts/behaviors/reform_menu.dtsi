@@ -15,9 +15,9 @@
             #binding-cells = <0>;
 
             item0  { text = "Exit Menu         ESC"; key = <ESC>;   bindings = <&reform_menu>;    };
-            item1  { text = "Power On            1"; key = <N1>;    bindings = <&kp N1>;          };
-            item2  { text = "Power Off           0"; key = <N0>;    bindings = <&kp N0>;          };
-            item3  { text = "Battery Status      b"; key = <B>;     bindings = <&kp B>;           };
+            item1  { text = "Power On            1"; key = <N1>;    bindings = <&kp W>;           };
+            item2  { text = "Power Off           0"; key = <N0>;    bindings = <&kp W>;           };
+            item3  { text = "Battery Status      b"; key = <B>;     bindings = <&kp W>;           };
             item4  { text = "Key Brightness-    F1"; key = <F1>;    bindings = <&rgb_ug RGB_BRD>; };
             item5  { text = "Key Brightness+    F2"; key = <F2>;    bindings = <&rgb_ug RGB_BRI>; };
             item6  { text = "Key Hue-           F3"; key = <F3>;    bindings = <&rgb_ug RGB_HUD>; };
@@ -25,7 +25,7 @@
             item8  { text = "Key Saturation-    F5"; key = <F5>;    bindings = <&rgb_ug RGB_SAD>; };
             item9  { text = "Key Saturation+    F6"; key = <F6>;    bindings = <&rgb_ug RGB_SAI>; };
             item10 { text = "Wake              SPC"; key = <SPACE>; bindings = <&kp W>;           };
-            item11 { text = "System Status       s"; key = <S>;     bindings = <&kp S>;           };
+            item11 { text = "System Status       s"; key = <S>;     bindings = <&kp W>;           };
             item12 { text = "Reset Keyboard      r"; key = <R>;     bindings = <&sys_reset>;      };
             item13 { text = "Reset USB           u"; key = <U>;     bindings = <&sys_reset>;      };
             item14 { text = "USB Flashing Mode   x"; key = <X>;     bindings = <&bootloader>;     };
