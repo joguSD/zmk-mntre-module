@@ -1,0 +1,15 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright 2026 joguSD
+config ZMK_BEHAVIOR_MENU
+    bool
+    default y
+    depends on DT_HAS_ZMK_BEHAVIOR_MENU_ENABLED
+
+if ZMK_BEHAVIOR_MENU
+
+config ZMK_BEHAVIOR_MENU_TODO
+    bool
+    help
+      Placeholder for menu configuration, delete if not needed
+
+endif #ZMK_BEHAVIOR_MENU

@@ -1,0 +1,20 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright 2026 joguSD
+description: Menu Behavior
+
+compatible: "zmk,behavior-menu"
+
+include: zero_param.yaml
+
+child-binding:
+  description: "Menu Item Definition"
+  properties:
+    text:
+      type: string
+      required: true
+    key:
+      type: int
+      required: true
+    bindings:
+      type: phandle-array
+      required: true
