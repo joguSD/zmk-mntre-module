@@ -23,6 +23,8 @@ In the future, I hope to implement full support for the laptop usecase as well.
 * RGB - WS2812 driver on PIO0
 * Display - Custom Display Code
     * does not use ZMK's display widgets
+* Menu - Custom Menu ZMK Behavior
+    * Matches the circle menu from original firmware
 * Settings saving & loading
 * Physical keyboard layout definition
 * ZMK Studio Support
