@@ -41,17 +41,17 @@ In the future, I hope to implement full support for the laptop usecase as well.
 ## Building from source
 
 * Follow the standard ZMK documentation to setup a [native toolchain](https://zmk.dev/docs/development/local-toolchain/setup/native)
-* Use the work in progress branch of ZMK that ports it to Zephyr 4.1 [core/move-to-zephyr-4-1](https://github.com/petejohanson/zmk/tree/core%2Fmove-to-zephyr-4-1)
+* Use the current main branch of ZMK that is on top of Zephyr 4.1
 * Build from within the ZMK repository using a command like the following, pointing to this repository as an extra module:
 
 ```
-west build -p -b reform -- -DZMK_EXTRA_MODULES=/some/path/zmk-mntre-module
+west build -p -b reform -S rp2-boot-mode-retention -- -DZMK_EXTRA_MODULES="/some/path/zmk-mntre-module"
 ```
 
 With ZMK Studio support enabled:
 
 ```
-west build -p -b reform -S studio-rpc-usb-uart -- -DZMK_EXTRA_MODULES="/home/jogu/projects/zmk-mntre-module" -DCONFIG_ZMK_STUDIO=y
+west build -p -b reform -S studio-rpc-usb-uart -S rp2-boot-mode-retention -- -DZMK_EXTRA_MODULES="/some/path/zmk-mntre-module" -DCONFIG_ZMK_STUDIO=yes
 ```
 
 ## Debugging
