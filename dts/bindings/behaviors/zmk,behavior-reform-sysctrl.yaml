@@ -1,0 +1,7 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright 2026 joguSD
+description: MNT Reform System Control Behavior
+
+compatible: "zmk,behavior-reform-sysctrl"
+
+include: two_param.yaml

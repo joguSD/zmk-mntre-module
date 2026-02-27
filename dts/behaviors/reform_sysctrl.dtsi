@@ -1,0 +1,15 @@
+/*
+  SPDX-License-Identifier: GPL-3.0-or-later
+  Copyright 2026 joguSD
+*/
+
+/ {
+    behaviors {
+        /omit-if-no-ref/
+        reform_sysctrl: reform_sysctrl {
+            compatible = "zmk,behavior-reform-sysctrl";
+            #binding-cells = <2>;
+            display-name = "Reform System Controller";
+        };
+    };
+};

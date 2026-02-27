@@ -18,10 +18,10 @@
 #include <reform/constants.h>
 #include <reform/display.h>
 
-LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
+LOG_MODULE_DECLARE(mnt, CONFIG_MNT_LOG_LEVEL);
 
 #define DISPLAY_THREAD_PRIORITY 5
-#define DISPLAY_THREAD_STACK_SIZE 2045
+#define DISPLAY_THREAD_STACK_SIZE 2046
 #define DISPLAY_TICK_PERIOD_MS 100
 
 static const struct device *display = DEVICE_DT_GET(DT_CHOSEN(zephyr_display));
@@ -121,14 +121,14 @@ void initialize_display(struct k_work *work) {
   LOG_INF("Reform Display Initialized!");
 }
 
-K_WORK_DEFINE(init_work, initialize_display);
+K_WORK_DEFINE(reform_display_init_work, initialize_display);
 
 static int reform_display_init(void) {
   k_work_queue_start(&display_work_q, display_work_stack_area,
                      K_THREAD_STACK_SIZEOF(display_work_stack_area),
                      DISPLAY_THREAD_PRIORITY, NULL);
 
-  k_work_submit_to_queue(&display_work_q, &init_work);
+  k_work_submit_to_queue(&display_work_q, &reform_display_init_work);
 
   LOG_INF("Reform Display Thread Initialized!");
   return 0;
