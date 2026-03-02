@@ -4,11 +4,15 @@
 */
 #include <string.h>
 
+#include <zephyr/app_version.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/uart.h>
 #include <zephyr/init.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
+
+#include <reform/display.h>
+#include <reform/matrix.h>
 
 LOG_MODULE_DECLARE(mnt, CONFIG_MNT_LOG_LEVEL);
 
@@ -30,6 +34,9 @@ static const struct device *const uart_dev = DEVICE_DT_GET(UART_DEVICE_NODE);
 
 static char rx_buf[REFORM_SYSCTRL_MSG_SIZE];
 static int rx_buf_pos;
+
+// TODO display logic doesn't feel right here
+static struct character_matrix character_matrix;
 
 void serial_cb(const struct device *dev, void *user_data) {
   uint8_t c;
@@ -111,33 +118,58 @@ static int reform_sysctrl_init(void) {
 SYS_INIT(reform_sysctrl_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
 
 // public api for sysctrl
-
-int reform_sysctrl_cmd(const char *cmd) {
+int reform_sysctrl_cmd(const char *cmd, char *res_buf) {
   // TODO do this properly (sysctrl thread, timeouts)
-  char tx_buf[REFORM_SYSCTRL_MSG_SIZE];
-  memset(tx_buf, 0, REFORM_SYSCTRL_MSG_SIZE);
-
   print_uart(cmd);
-  while (k_msgq_get(&uart_msgq, &tx_buf, K_FOREVER) == 0) {
-    // tx_buf will have response
+  while (k_msgq_get(&uart_msgq, res_buf, K_FOREVER) == 0) {
+    // res_buf will have response
     return 1;
   }
 
   return 0;
 }
 
-int reform_sysctrl_power_on() { return reform_sysctrl_cmd("1p\r"); }
+int reform_sysctrl_power_on() {
+  char res_buf[REFORM_SYSCTRL_MSG_SIZE];
+  return reform_sysctrl_cmd("1p\r", res_buf);
+}
 
-int reform_sysctrl_power_off() { return reform_sysctrl_cmd("0p\r"); }
+int reform_sysctrl_power_off() {
+  char res_buf[REFORM_SYSCTRL_MSG_SIZE];
+  return reform_sysctrl_cmd("0p\r", res_buf);
+}
 
 int reform_sysctrl_status() {
-  // TODO parse system status
-  return reform_sysctrl_cmd("s\r");
+  char res_buf[REFORM_SYSCTRL_MSG_SIZE];
+  int ret = reform_sysctrl_cmd("s\r", res_buf);
+  if (ret) {
+    matrix_clear(&character_matrix);
+    matrix_write_P(&character_matrix, res_buf);
+    matrix_write_P(&character_matrix, "\nmnt ");
+    matrix_write_P(&character_matrix, MNT_GIT_SHA);
+    matrix_write_P(&character_matrix, "\nzmk ");
+    matrix_write_P(&character_matrix, ZMK_GIT_SHA);
+    matrix_write_P(&character_matrix, "\nzephyr ");
+    matrix_write_P(&character_matrix, ZEPHYR_GIT_SHA);
+    matrix_render(&character_matrix, buffer_get(), -1);
+    buffer_show();
+  }
+  return ret;
 }
 
 int reform_sysctrl_battery() {
-  // TODO parse battery status
-  return reform_sysctrl_cmd("c\r");
+  char res_buf[REFORM_SYSCTRL_MSG_SIZE];
+  int ret = reform_sysctrl_cmd("c\r", res_buf);
+  if (ret) {
+    matrix_clear(&character_matrix);
+    matrix_write_P(&character_matrix, res_buf);
+    matrix_render(&character_matrix, buffer_get(), -1);
+    buffer_show();
+  }
+  return ret;
 }
 
-int reform_sysctrl_wake() { return reform_sysctrl_cmd("1w\r"); }
+int reform_sysctrl_wake() {
+  char res_buf[REFORM_SYSCTRL_MSG_SIZE];
+  return reform_sysctrl_cmd("1w\r", res_buf);
+}

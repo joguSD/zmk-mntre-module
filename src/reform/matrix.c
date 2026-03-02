@@ -13,9 +13,9 @@ void matrix_write_char_inner(struct character_matrix *matrix, uint8_t c) {
   if (matrix->cursor - &matrix->display[0][0] == sizeof(matrix->display)) {
     // We went off the end; scroll the display upwards by one line
     memmove(&matrix->display[0], &matrix->display[1],
-            CMATRIX_COLS * (CMATRIX_ROWS - 1));
-    matrix->cursor = &matrix->display[CMATRIX_ROWS - 1][0];
-    memset(matrix->cursor, ' ', CMATRIX_COLS);
+            DISPLAY_TEXT_COLS * (DISPLAY_TEXT_ROWS - 1));
+    matrix->cursor = &matrix->display[DISPLAY_TEXT_ROWS - 1][0];
+    memset(matrix->cursor, ' ', DISPLAY_TEXT_COLS);
   }
 
   *matrix->cursor = c;
@@ -26,9 +26,10 @@ void matrix_write_char(struct character_matrix *matrix, uint8_t c) {
   if (c == '\n') {
     // Clear to end of line from the cursor and then move to the
     // start of the next line
-    int cursor_col = (matrix->cursor - &matrix->display[0][0]) % CMATRIX_COLS;
+    int cursor_col =
+        (matrix->cursor - &matrix->display[0][0]) % DISPLAY_TEXT_COLS;
 
-    while (cursor_col++ < CMATRIX_COLS) {
+    while (cursor_col++ < DISPLAY_TEXT_COLS) {
       matrix_write_char_inner(matrix, ' ');
     }
     return;
@@ -56,8 +57,8 @@ void matrix_clear(struct character_matrix *matrix) {
 void matrix_render(struct character_matrix *matrix, uint8_t *display_buffer,
                    int invert_row) {
   int i = 0;
-  for (uint8_t row = 0; row < CMATRIX_ROWS; ++row) {
-    for (uint8_t col = 0; col < CMATRIX_COLS; ++col) {
+  for (uint8_t row = 0; row < DISPLAY_TEXT_ROWS; ++row) {
+    for (uint8_t col = 0; col < DISPLAY_TEXT_COLS; ++col) {
       const uint8_t *glyph =
           reform_font + (matrix->display[row][col] * FONT_WIDTH);
       for (uint8_t glyphCol = 0; glyphCol < FONT_WIDTH; ++glyphCol) {

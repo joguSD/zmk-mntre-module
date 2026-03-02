@@ -15,8 +15,8 @@
 
 #include <zmk/behavior.h>
 
-#include <reform/sysctrl.h>
 #include <dt-bindings/zmk/reform_sysctrl.h>
+#include <reform/sysctrl.h>
 
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 

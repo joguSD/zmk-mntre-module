@@ -1,9 +1,15 @@
 #pragma once
 #include <zephyr/devicetree.h>
 
+#define FONT_WIDTH 6
+#define FONT_HEIGHT 8
+
 #define DISPLAY_NODE DT_CHOSEN(zephyr_display)
 
 #define DISPLAY_WIDTH DT_PROP(DISPLAY_NODE, width)
 #define DISPLAY_HEIGHT DT_PROP(DISPLAY_NODE, height)
+
+#define DISPLAY_TEXT_ROWS (DISPLAY_HEIGHT / FONT_HEIGHT)
+#define DISPLAY_TEXT_COLS (DISPLAY_WIDTH / FONT_WIDTH)
 
 #define BUFFER_SIZE DISPLAY_WIDTH *DISPLAY_HEIGHT / 8

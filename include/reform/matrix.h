@@ -4,13 +4,8 @@
 
 #include <reform/constants.h>
 
-#define FONT_WIDTH 6
-#define FONT_HEIGHT 8
-#define CMATRIX_ROWS (DISPLAY_HEIGHT / FONT_HEIGHT)
-#define CMATRIX_COLS (DISPLAY_WIDTH / FONT_WIDTH)
-
 struct character_matrix {
-  uint8_t display[CMATRIX_ROWS][CMATRIX_COLS];
+  uint8_t display[DISPLAY_TEXT_ROWS][DISPLAY_TEXT_COLS];
   uint8_t *cursor;
 };
 

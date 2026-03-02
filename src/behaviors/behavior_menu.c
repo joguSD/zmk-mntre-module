@@ -132,10 +132,10 @@ void menu_cycle_up() {
 void menu_cycle_down() {
   struct behavior_menu_data *data = active_menu_dev->data;
   const struct behavior_menu_config *config = active_menu_dev->config;
-  if (data->highlight_index < CMATRIX_ROWS - 1) {
+  if (data->highlight_index < DISPLAY_TEXT_ROWS - 1) {
     data->highlight_index++;
   } else {
-    if (data->item_index < config->menu_len - CMATRIX_ROWS) {
+    if (data->item_index < config->menu_len - DISPLAY_TEXT_ROWS) {
       data->item_index++;
     }
   }
@@ -205,7 +205,7 @@ void menu_render(const struct behavior_menu_config *menu_config,
                  const struct behavior_menu_data *menu_data) {
   uint8_t item_index = menu_data->item_index;
   matrix_clear(&character_matrix);
-  for (int i = 0; i < CMATRIX_ROWS; i++) {
+  for (int i = 0; i < DISPLAY_TEXT_ROWS; i++) {
     matrix_write_P(&character_matrix,
                    menu_config->menu_items[item_index++].text);
     if (item_index >= menu_config->menu_len) {
