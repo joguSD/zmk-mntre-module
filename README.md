@@ -25,13 +25,13 @@ In the future, I hope to implement full support for the laptop usecase as well.
     * does not use ZMK's display widgets
 * Menu - Custom Menu ZMK Behavior
     * Matches the circle menu from original firmware
+    * MNT Reform system controller support
 * Settings saving & loading
 * Physical keyboard layout definition
 * ZMK Studio Support
 
 ## No plan yet
 * Trackball, Trackpad support
-* MNT Reform system controller support
 * MNT Reform Pocket support
 
 # Testing
@@ -54,14 +54,6 @@ With ZMK Studio support enabled:
 
 ```
 west build -p -b reform -S studio-rpc-usb-uart -S rp2-boot-mode-retention -- -DZMK_EXTRA_MODULES="/some/path/zmk-mntre-module" -DCONFIG_ZMK_STUDIO=yes
-```
-
-## Debugging
-
-* Currently, the UART port normally used for the system controller communication is being used as a UART console.
-
-```
-sudo minicom -D /dev/ttyACM1 -b 11520
 ```
 
 ## References
