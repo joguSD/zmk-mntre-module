@@ -13,16 +13,13 @@
 #include <zmk/event_manager.h>
 #include <zmk/events/activity_state_changed.h>
 
-#include <zmk-behavior-menu/menu.h>
-
 #include <reform/constants.h>
 #include <reform/display.h>
 
 LOG_MODULE_DECLARE(mnt, CONFIG_MNT_LOG_LEVEL);
 
 #define DISPLAY_THREAD_PRIORITY 5
-#define DISPLAY_THREAD_STACK_SIZE 2046
-#define DISPLAY_TICK_PERIOD_MS 100
+#define DISPLAY_THREAD_STACK_SIZE 2048
 
 static const struct device *display = DEVICE_DT_GET(DT_CHOSEN(zephyr_display));
 static struct display_buffer_descriptor desc = {
@@ -69,8 +66,11 @@ static uint8_t logo[BUFFER_SIZE] = {
     0,   0,
 };
 static uint8_t display_buffer[BUFFER_SIZE];
+static display_render_callback_t render_callback;
 
-uint8_t *buffer_get() { return display_buffer; }
+K_SEM_DEFINE(render_sem, 0, 1);
+K_THREAD_STACK_DEFINE(display_work_stack_area, DISPLAY_THREAD_STACK_SIZE);
+static struct k_thread display_thread_data;
 
 void buffer_clear() { memset(display_buffer, 0, BUFFER_SIZE); }
 
@@ -81,25 +81,18 @@ int buffer_show() {
   return api->write(display, 0, 0, &desc, display_buffer);
 }
 
-void display_tick_cb(struct k_work *work) {
-  buffer_clear();
-  buffer_logo();
-  buffer_show();
+static void render_logo_callback(uint8_t *buffer) { buffer_logo(); }
+
+void display_request_render(display_render_callback_t requested_callback) {
+  if (requested_callback) {
+    render_callback = requested_callback;
+  } else {
+    render_callback = render_logo_callback;
+  }
+  k_sem_give(&render_sem);
 }
 
-K_WORK_DEFINE(display_tick_work, display_tick_cb);
-
-K_THREAD_STACK_DEFINE(display_work_stack_area, DISPLAY_THREAD_STACK_SIZE);
-
-static struct k_work_q display_work_q;
-
-void display_timer_cb() {
-  k_work_submit_to_queue(&display_work_q, &display_tick_work);
-}
-
-K_TIMER_DEFINE(display_timer, display_timer_cb, NULL);
-
-void initialize_display(struct k_work *work) {
+static void reform_display_render_loop(void *p1, void *p2, void *p3) {
   if (!device_is_ready(display)) {
     LOG_ERR("Failed to find display device");
     return;
@@ -115,20 +108,24 @@ void initialize_display(struct k_work *work) {
   buffer_show();
   display_blanking_off(display);
 
-  // k_timer_start(&display_timer, K_MSEC(DISPLAY_TICK_PERIOD_MS),
-  //         K_MSEC(DISPLAY_TICK_PERIOD_MS));
-
   LOG_INF("Reform Display Initialized!");
+
+  while (true) {
+    k_sem_take(&render_sem, K_FOREVER);
+    display_render_callback_t callback = render_callback;
+    if (callback) {
+      buffer_clear();
+      callback(display_buffer);
+      buffer_show();
+    }
+  }
 }
 
-K_WORK_DEFINE(reform_display_init_work, initialize_display);
-
 static int reform_display_init(void) {
-  k_work_queue_start(&display_work_q, display_work_stack_area,
-                     K_THREAD_STACK_SIZEOF(display_work_stack_area),
-                     DISPLAY_THREAD_PRIORITY, NULL);
-
-  k_work_submit_to_queue(&display_work_q, &reform_display_init_work);
+  k_thread_create(&display_thread_data, display_work_stack_area,
+                  K_THREAD_STACK_SIZEOF(display_work_stack_area),
+                  reform_display_render_loop, NULL, NULL, NULL,
+                  DISPLAY_THREAD_PRIORITY, 0, K_NO_WAIT);
 
   LOG_INF("Reform Display Thread Initialized!");
   return 0;

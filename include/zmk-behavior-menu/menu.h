@@ -23,6 +23,3 @@ struct behavior_menu_config {
   size_t menu_len;
   struct menu_item *menu_items;
 };
-
-void menu_render(const struct behavior_menu_config *menu_config,
-                 const struct behavior_menu_data *menu_data);

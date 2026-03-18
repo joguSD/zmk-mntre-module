@@ -18,7 +18,7 @@ LOG_MODULE_DECLARE(mnt, CONFIG_MNT_LOG_LEVEL);
 
 #define REFORM_SYSCTRL_MSG_SIZE 128
 #define REFORM_SYSCTRL_THREAD_PRIORITY 3
-#define REFORM_SYSCTRL_THREAD_STACK_SIZE 2046
+#define REFORM_SYSCTRL_THREAD_STACK_SIZE 2048
 
 #define UART_DEVICE_NODE DT_CHOSEN(mnt_reform_sysctrl)
 
@@ -35,8 +35,27 @@ static const struct device *const uart_dev = DEVICE_DT_GET(UART_DEVICE_NODE);
 static char rx_buf[REFORM_SYSCTRL_MSG_SIZE];
 static int rx_buf_pos;
 
-// TODO display logic doesn't feel right here
 static struct character_matrix character_matrix;
+static char status_response[REFORM_SYSCTRL_MSG_SIZE];
+static char battery_response[REFORM_SYSCTRL_MSG_SIZE];
+
+static void status_render_callback(uint8_t *buffer) {
+  matrix_clear(&character_matrix);
+  matrix_write_P(&character_matrix, status_response);
+  matrix_write_P(&character_matrix, "\nmnt ");
+  matrix_write_P(&character_matrix, MNT_GIT_SHA);
+  matrix_write_P(&character_matrix, "\nzmk ");
+  matrix_write_P(&character_matrix, ZMK_GIT_SHA);
+  matrix_write_P(&character_matrix, "\nzephyr ");
+  matrix_write_P(&character_matrix, ZEPHYR_GIT_SHA);
+  matrix_render(&character_matrix, buffer, -1);
+}
+
+static void battery_render_callback(uint8_t *buffer) {
+  matrix_clear(&character_matrix);
+  matrix_write_P(&character_matrix, battery_response);
+  matrix_render(&character_matrix, buffer, -1);
+}
 
 void serial_cb(const struct device *dev, void *user_data) {
   uint8_t c;
@@ -140,31 +159,17 @@ int reform_sysctrl_power_off() {
 }
 
 int reform_sysctrl_status() {
-  char res_buf[REFORM_SYSCTRL_MSG_SIZE];
-  int ret = reform_sysctrl_cmd("s\r", res_buf);
+  int ret = reform_sysctrl_cmd("s\r", status_response);
   if (ret) {
-    matrix_clear(&character_matrix);
-    matrix_write_P(&character_matrix, res_buf);
-    matrix_write_P(&character_matrix, "\nmnt ");
-    matrix_write_P(&character_matrix, MNT_GIT_SHA);
-    matrix_write_P(&character_matrix, "\nzmk ");
-    matrix_write_P(&character_matrix, ZMK_GIT_SHA);
-    matrix_write_P(&character_matrix, "\nzephyr ");
-    matrix_write_P(&character_matrix, ZEPHYR_GIT_SHA);
-    matrix_render(&character_matrix, buffer_get(), -1);
-    buffer_show();
+    display_request_render(status_render_callback);
   }
   return ret;
 }
 
 int reform_sysctrl_battery() {
-  char res_buf[REFORM_SYSCTRL_MSG_SIZE];
-  int ret = reform_sysctrl_cmd("c\r", res_buf);
+  int ret = reform_sysctrl_cmd("c\r", battery_response);
   if (ret) {
-    matrix_clear(&character_matrix);
-    matrix_write_P(&character_matrix, res_buf);
-    matrix_render(&character_matrix, buffer_get(), -1);
-    buffer_show();
+    display_request_render(battery_render_callback);
   }
   return ret;
 }

@@ -33,6 +33,33 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 const struct device *active_menu_dev;
 static struct character_matrix character_matrix;
 
+// bridge behavior and our custom display logic
+static void menu_render_callback(uint8_t *buffer) {
+  if (!active_menu_dev) {
+    return;
+  }
+
+  const struct device *menu_dev = active_menu_dev;
+  const struct behavior_menu_config *menu_config = menu_dev->config;
+  const struct behavior_menu_data *menu_data = menu_dev->data;
+
+  uint8_t item_index = menu_data->item_index;
+  matrix_clear(&character_matrix);
+  for (int i = 0; i < DISPLAY_TEXT_ROWS; i++) {
+    matrix_write_P(&character_matrix,
+                   menu_config->menu_items[item_index++].text);
+    if (item_index >= menu_config->menu_len) {
+      item_index = 0;
+    }
+  }
+
+  matrix_render(&character_matrix, buffer, menu_data->highlight_index);
+}
+
+static void menu_schedule_render() {
+  display_request_render(menu_render_callback);
+}
+
 // Initialization Function (Optional)
 static int menu_init(const struct device *dev) { return 0; };
 
@@ -50,16 +77,13 @@ static int on_menu_binding_pressed(struct zmk_behavior_binding *binding,
     active_menu_dev = NULL;
     data->item_index = 0;
     data->highlight_index = 0;
-    buffer_logo();
-    buffer_show();
+    display_request_render(NULL);
     return ZMK_BEHAVIOR_OPAQUE;
   }
 
   LOG_INF("Activating Menu: %s", dev->name);
   active_menu_dev = dev;
-  const struct behavior_menu_config *config = active_menu_dev->config;
-  const struct behavior_menu_data *data = active_menu_dev->data;
-  menu_render(config, data);
+  menu_schedule_render();
 
   return ZMK_BEHAVIOR_OPAQUE;
 }
@@ -159,13 +183,13 @@ static int menu_keycode_state_changed_listener(const zmk_event_t *eh) {
 
   if (ev->keycode == HID_USAGE_KEY_KEYBOARD_UPARROW && !ev->state) {
     menu_cycle_up();
-    menu_render(config, data);
+    menu_schedule_render();
     return ZMK_EV_EVENT_HANDLED;
   }
 
   if (ev->keycode == HID_USAGE_KEY_KEYBOARD_DOWNARROW && !ev->state) {
     menu_cycle_down();
-    menu_render(config, data);
+    menu_schedule_render();
     return ZMK_EV_EVENT_HANDLED;
   }
 
@@ -198,23 +222,6 @@ static int menu_keycode_state_changed_listener(const zmk_event_t *eh) {
 
   // Menu is active, process events by updating menu
   return ZMK_EV_EVENT_HANDLED;
-}
-
-// bridge behavior and our custom display logic
-void menu_render(const struct behavior_menu_config *menu_config,
-                 const struct behavior_menu_data *menu_data) {
-  uint8_t item_index = menu_data->item_index;
-  matrix_clear(&character_matrix);
-  for (int i = 0; i < DISPLAY_TEXT_ROWS; i++) {
-    matrix_write_P(&character_matrix,
-                   menu_config->menu_items[item_index++].text);
-    if (item_index >= menu_config->menu_len) {
-      item_index = 0;
-    }
-  }
-
-  matrix_render(&character_matrix, buffer_get(), menu_data->highlight_index);
-  buffer_show();
 }
 
 #endif /* DT_HAS_COMPAT_STATUS_OKAY(DT_DRV_COMPAT) */
