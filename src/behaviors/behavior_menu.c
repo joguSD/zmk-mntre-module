@@ -156,12 +156,12 @@ void menu_cycle_up() {
 void menu_cycle_down() {
   struct behavior_menu_data *data = active_menu_dev->data;
   const struct behavior_menu_config *config = active_menu_dev->config;
-  if (data->highlight_index < DISPLAY_TEXT_ROWS - 1) {
+  if (data->highlight_index < DISPLAY_TEXT_ROWS - 1 &&
+      data->highlight_index < config->menu_len - 1) {
     data->highlight_index++;
-  } else {
-    if (data->item_index < config->menu_len - DISPLAY_TEXT_ROWS) {
-      data->item_index++;
-    }
+  } else if (config->menu_len > DISPLAY_TEXT_ROWS &&
+             data->item_index < config->menu_len - DISPLAY_TEXT_ROWS) {
+    data->item_index++;
   }
 
   LOG_DBG("Menu Down i %d, h %d", data->item_index, data->highlight_index);
