@@ -2,8 +2,6 @@
   SPDX-License-Identifier: GPL-3.0-or-later
   Copyright 2025 joguSD
 */
-#include <stdio.h>
-
 #include <zephyr/device.h>
 #include <zephyr/drivers/display.h>
 #include <zephyr/init.h>

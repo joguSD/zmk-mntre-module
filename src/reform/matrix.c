@@ -3,7 +3,6 @@
   Copyright 2021-2024 MNT Research GmbH (mntre.com)
   Copyright 2026 joguSD
 */
-#include <stdio.h>
 #include <string.h>
 
 #include <reform/font.h>
