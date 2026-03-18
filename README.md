@@ -15,7 +15,7 @@ In the future, I hope to implement full support for the laptop usecase as well.
 **The USB HID is currently unstable and will crash often making the keyboard unresponsive to the host**
 
 * If this happens, the keyboard can be reset by pressing `CIRCLE -> R`
-* The keyboard can be putting flashing mode by pressing `CIRCLE -> X`
+* The keyboard can be put into flashing mode by pressing `CIRCLE -> X`
 
 ## Functional
 * Reform device tree and pinctrl
@@ -55,6 +55,10 @@ With ZMK Studio support enabled:
 ```
 west build -p -b reform -S studio-rpc-usb-uart -S rp2-boot-mode-retention -- -DZMK_EXTRA_MODULES="/some/path/zmk-mntre-module" -DCONFIG_ZMK_STUDIO=yes
 ```
+
+Additional snippets can be added to build for either the MNT Reform Classic or in standalone mode:
+* `-S reform-standalone`
+* `-S reform-classic`
 
 ## References
 
