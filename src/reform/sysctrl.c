@@ -57,6 +57,12 @@ static void battery_render_callback(uint8_t *buffer) {
   matrix_render(&character_matrix, buffer, -1);
 }
 
+static void error_render_callback(uint8_t *buffer) {
+  matrix_clear(&character_matrix);
+  matrix_write_P(&character_matrix, "sysctrl timeout!");
+  matrix_render(&character_matrix, buffer, -1);
+}
+
 void serial_cb(const struct device *dev, void *user_data) {
   uint8_t c;
 
@@ -136,45 +142,62 @@ static int reform_sysctrl_init(void) {
 
 SYS_INIT(reform_sysctrl_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
 
-// public api for sysctrl
-int reform_sysctrl_cmd(const char *cmd, char *res_buf) {
-  // TODO do this properly (sysctrl thread, timeouts)
+static void reform_sysctrl_flush() {
+  char discard[REFORM_SYSCTRL_MSG_SIZE];
+  while (k_msgq_get(&uart_msgq, discard, K_NO_WAIT) == 0) {
+  }
+}
+
+static int reform_sysctrl_cmd(const char *cmd, char *res_buf) {
+  reform_sysctrl_flush();
   print_uart(cmd);
-  while (k_msgq_get(&uart_msgq, res_buf, K_FOREVER) == 0) {
+  while (k_msgq_get(&uart_msgq, res_buf, K_MSEC(200)) == 0) {
     // res_buf will have response
     return 1;
   }
 
+  LOG_WRN("Sysctrl command timed out: %s", cmd);
+  display_request_render(error_render_callback);
   return 0;
 }
 
-int reform_sysctrl_power_on() {
+static void power_on_work_handler(struct k_work *work) {
   char res_buf[REFORM_SYSCTRL_MSG_SIZE];
-  return reform_sysctrl_cmd("1p\r", res_buf);
+  reform_sysctrl_cmd("1p\r", res_buf);
 }
 
-int reform_sysctrl_power_off() {
+static void power_off_work_handler(struct k_work *work) {
   char res_buf[REFORM_SYSCTRL_MSG_SIZE];
-  return reform_sysctrl_cmd("0p\r", res_buf);
+  reform_sysctrl_cmd("0p\r", res_buf);
 }
 
-int reform_sysctrl_status() {
+static void status_work_handler(struct k_work *work) {
   int ret = reform_sysctrl_cmd("s\r", status_response);
   if (ret) {
     display_request_render(status_render_callback);
   }
-  return ret;
 }
 
-int reform_sysctrl_battery() {
+static void battery_work_handler(struct k_work *work) {
   int ret = reform_sysctrl_cmd("c\r", battery_response);
   if (ret) {
     display_request_render(battery_render_callback);
   }
-  return ret;
 }
 
-int reform_sysctrl_wake() {
+static void wake_work_handler(struct k_work *work) {
   char res_buf[REFORM_SYSCTRL_MSG_SIZE];
-  return reform_sysctrl_cmd("1w\r", res_buf);
+  reform_sysctrl_cmd("1w\r", res_buf);
 }
+
+#define SYSCTRL_CMD(sysctrl_cmd)                                               \
+  K_WORK_DEFINE(sysctrl_cmd##_work, sysctrl_cmd##_work_handler);               \
+  void reform_sysctrl_##sysctrl_cmd() {                                        \
+    k_work_submit_to_queue(&reform_sysctrl_work_q, &sysctrl_cmd##_work);       \
+  }
+
+SYSCTRL_CMD(power_on);
+SYSCTRL_CMD(power_off);
+SYSCTRL_CMD(status);
+SYSCTRL_CMD(battery);
+SYSCTRL_CMD(wake);
