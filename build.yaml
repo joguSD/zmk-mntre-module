@@ -13,4 +13,8 @@ include:
   - board: reform
     snippet: rp2-boot-mode-retention studio-rpc-usb-uart
     cmake-args: -DCONFIG_ZMK_STUDIO=y
-    artifact-name: reform_zmk_studio
+    artifact-name: reform
+  - board: reform
+    snippet: rp2-boot-mode-retention studio-rpc-usb-uart reform-standalone
+    cmake-args: -DCONFIG_ZMK_STUDIO=y
+    artifact-name: reform_standalone

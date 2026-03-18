@@ -172,10 +172,15 @@ static void power_off_work_handler(struct k_work *work) {
 }
 
 static void status_work_handler(struct k_work *work) {
+#ifndef CONFIG_MNT_REFORM_STANDALONE
   int ret = reform_sysctrl_cmd("s\r", status_response);
   if (ret) {
     display_request_render(status_render_callback);
   }
+#else
+  strncpy(status_response, "STANDALONE", REFORM_SYSCTRL_MSG_SIZE);
+  display_request_render(status_render_callback);
+#endif
 }
 
 static void battery_work_handler(struct k_work *work) {

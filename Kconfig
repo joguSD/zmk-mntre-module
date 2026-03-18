@@ -1,5 +1,9 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright 2026 joguSD
+config MNT_REFORM_STANDALONE
+    bool "Standalone keyboard without sysctrl"
+    default n
+
 config ZMK_BEHAVIOR_MENU
     bool
     default y

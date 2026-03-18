@@ -1,0 +1,4 @@
+name: reform-standalone
+append:
+  EXTRA_CONF_FILE: reform-standalone.conf
+  DTS_EXTRA_CPPFLAGS: -DCONFIG_MNT_REFORM_STANDALONE
