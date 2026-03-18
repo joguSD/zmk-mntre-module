@@ -9,6 +9,7 @@
 #include <zephyr/init.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/sys/atomic.h>
 
 #include <zmk/event_manager.h>
 #include <zmk/events/activity_state_changed.h>
@@ -66,7 +67,7 @@ static uint8_t logo[BUFFER_SIZE] = {
     0,   0,
 };
 static uint8_t display_buffer[BUFFER_SIZE];
-static display_render_callback_t render_callback;
+static atomic_ptr_t render_callback;
 
 K_SEM_DEFINE(render_sem, 0, 1);
 K_THREAD_STACK_DEFINE(display_work_stack_area, DISPLAY_THREAD_STACK_SIZE);
@@ -84,11 +85,11 @@ int buffer_show() {
 static void render_logo_callback(uint8_t *buffer) { buffer_logo(); }
 
 void display_request_render(display_render_callback_t requested_callback) {
-  if (requested_callback) {
-    render_callback = requested_callback;
-  } else {
-    render_callback = render_logo_callback;
+  if (!requested_callback) {
+    requested_callback = render_logo_callback;
   }
+
+  atomic_ptr_set(&render_callback, (void *)requested_callback);
   k_sem_give(&render_sem);
 }
 
@@ -112,7 +113,8 @@ static void reform_display_render_loop(void *p1, void *p2, void *p3) {
 
   while (true) {
     k_sem_take(&render_sem, K_FOREVER);
-    display_render_callback_t callback = render_callback;
+    display_render_callback_t callback =
+        (display_render_callback_t)atomic_ptr_get(&render_callback);
     if (callback) {
       buffer_clear();
       callback(display_buffer);
