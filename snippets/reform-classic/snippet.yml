@@ -1,0 +1,4 @@
+name: reform-classic
+append:
+  EXTRA_CONF_FILE: reform-classic.conf
+  EXTRA_DTC_OVERLAY_FILE: reform-classic.overlay
