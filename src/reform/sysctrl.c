@@ -51,9 +51,111 @@ static void status_render_callback(uint8_t *buffer) {
   matrix_render(&character_matrix, buffer, -1);
 }
 
+#define BAT_ICON_BASE 128 // glyph index 4*32
+#define BAT_ICON_EMPTY 0
+#define BAT_ICON_25 2
+#define BAT_ICON_50 4
+#define BAT_ICON_75 6
+#define BAT_ICON_FULL 8
+
+static void insert_bat_icon(char *str, int x, double v) {
+  uint8_t level = BAT_ICON_EMPTY;
+  if (v >= 3.3) {
+    level = BAT_ICON_FULL;
+  } else if (v >= 3.1) {
+    level = BAT_ICON_75;
+  } else if (v >= 3.0) {
+    level = BAT_ICON_50;
+  } else if (v >= 2.9) {
+    level = BAT_ICON_25;
+  }
+  str[x] = BAT_ICON_BASE + level;
+  str[x + 1] = BAT_ICON_BASE + level + 1;
+}
+
+// Parse sysctrl 'c' response and render 4-row battery display with icons
+// Response format: "39 39 39 39 39 39 39 39 mA-1234mV12345 069% P1"
+//                   0  3  6  9  12 15 18 21 24 26    33    39   44
 static void battery_render_callback(uint8_t *buffer) {
+  char *r = battery_response;
+  double voltages[8];
+
+  for (int i = 0; i < 8; i++) {
+    voltages[i] = ((r[i * 3] - '0') * 10 + (r[i * 3 + 1] - '0')) / 10.0;
+    if (voltages[i] < 0)
+      voltages[i] = 0;
+    if (voltages[i] >= 10)
+      voltages[i] = 9.9;
+  }
+
+  int amps_offset = 3 * 8 + 2;
+  int amps_sign = 1;
+  int ai = amps_offset;
+  if (r[ai] == '-') {
+    amps_sign = -1;
+    ai++;
+  }
+  int amps_raw = 0;
+  while (ai < amps_offset + 5 && r[ai] >= '0' && r[ai] <= '9') {
+    amps_raw = amps_raw * 10 + (r[ai++] - '0');
+  }
+  double bat_amps = (amps_sign * amps_raw) / 1000.0;
+
+  int volts_offset = amps_offset + 5 + 2;
+  int volts_raw = 0;
+  for (int i = volts_offset; i < volts_offset + 5; i++) {
+    if (r[i] >= '0' && r[i] <= '9')
+      volts_raw = volts_raw * 10 + (r[i] - '0');
+  }
+  double bat_volts = volts_raw / 1000.0;
+
+  int gauge_offset = volts_offset + 5 + 1;
+  char bat_gauge[5];
+  memcpy(bat_gauge, &r[gauge_offset], 4);
+  bat_gauge[4] = '\0';
+
+  int syspower_offset = gauge_offset + 5;
+  const char *power_str = "   ";
+  if (r[syspower_offset + 1] == '1')
+    power_str = " On";
+  else if (r[syspower_offset + 1] == '0')
+    power_str = "Off";
+
   matrix_clear(&character_matrix);
-  matrix_write_P(&character_matrix, battery_response);
+  char str[22];
+
+  // [##] 3.9  [##] 3.9   069%
+  snprintf(str, 22, "[] %.1f  [] %.1f   %s", voltages[0], voltages[4],
+           bat_gauge);
+  insert_bat_icon(str, 0, voltages[0]);
+  insert_bat_icon(str, 8, voltages[4]);
+  matrix_poke_str(&character_matrix, 0, 0, str);
+
+  // [##] 3.9  [##] 3.9     On
+  snprintf(str, 22, "[] %.1f  [] %.1f    %s", voltages[1], voltages[5],
+           power_str);
+  insert_bat_icon(str, 0, voltages[1]);
+  insert_bat_icon(str, 8, voltages[5]);
+  matrix_poke_str(&character_matrix, 0, 1, str);
+
+  // [##] 3.9  [##] 3.9  0.256A
+  if (bat_amps >= 0)
+    snprintf(str, 22, "[] %.1f  [] %.1f %2.3fA", voltages[2], voltages[6],
+             bat_amps);
+  else
+    snprintf(str, 22, "[] %.1f  [] %.1f %2.2fA", voltages[2], voltages[6],
+             bat_amps);
+  insert_bat_icon(str, 0, voltages[2]);
+  insert_bat_icon(str, 8, voltages[6]);
+  matrix_poke_str(&character_matrix, 0, 2, str);
+
+  // [##] 3.9  [##] 3.9  12.34V
+  snprintf(str, 22, "[] %.1f  [] %.1f %2.2fV", voltages[3], voltages[7],
+           bat_volts);
+  insert_bat_icon(str, 0, voltages[3]);
+  insert_bat_icon(str, 8, voltages[7]);
+  matrix_poke_str(&character_matrix, 0, 3, str);
+
   matrix_render(&character_matrix, buffer, -1);
 }
 
@@ -76,7 +178,10 @@ void serial_cb(const struct device *dev, void *user_data) {
 
   /* read until FIFO empty */
   while (uart_fifo_read(uart_dev, &c, 1) == 1) {
-    if ((c == '\n' || c == '\r') && rx_buf_pos > 0) {
+    if (c == '\n') {
+      continue;
+    }
+    if (c == '\r' && rx_buf_pos > 0) {
       /* terminate string */
       rx_buf[rx_buf_pos] = '\0';
 
@@ -152,7 +257,6 @@ static int reform_sysctrl_cmd(const char *cmd, char *res_buf) {
   reform_sysctrl_flush();
   print_uart(cmd);
   if (k_msgq_get(&uart_msgq, res_buf, K_MSEC(200)) == 0) {
-    // res_buf will have response
     return 1;
   }
 
@@ -186,6 +290,7 @@ static void status_work_handler(struct k_work *work) {
 static void battery_work_handler(struct k_work *work) {
   int ret = reform_sysctrl_cmd("c\r", battery_response);
   if (ret) {
+    LOG_DBG("battery response: %s", battery_response);
     display_request_render(battery_render_callback);
   }
 }

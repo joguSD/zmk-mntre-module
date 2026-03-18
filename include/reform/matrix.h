@@ -13,5 +13,9 @@ void matrix_write_char_inner(struct character_matrix *matrix, uint8_t c);
 void matrix_write_char(struct character_matrix *matrix, uint8_t c);
 void matrix_write_P(struct character_matrix *matrix, const char *data);
 void matrix_clear(struct character_matrix *matrix);
+void matrix_poke(struct character_matrix *matrix, uint8_t x, uint8_t y,
+                 uint8_t c);
+void matrix_poke_str(struct character_matrix *matrix, uint8_t x, uint8_t y,
+                     const char *str);
 void matrix_render(struct character_matrix *matrix, uint8_t *display_buffer,
                    int invert_row);

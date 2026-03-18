@@ -53,6 +53,20 @@ void matrix_clear(struct character_matrix *matrix) {
   matrix->cursor = &matrix->display[0][0];
 }
 
+void matrix_poke(struct character_matrix *matrix, uint8_t x, uint8_t y,
+                 uint8_t c) {
+  if (x < DISPLAY_TEXT_COLS && y < DISPLAY_TEXT_ROWS) {
+    matrix->display[y][x] = c;
+  }
+}
+
+void matrix_poke_str(struct character_matrix *matrix, uint8_t x, uint8_t y,
+                     const char *str) {
+  while (*str && x < DISPLAY_TEXT_COLS) {
+    matrix->display[y][x++] = *str++;
+  }
+}
+
 void matrix_render(struct character_matrix *matrix, uint8_t *display_buffer,
                    int invert_row) {
   int i = 0;
