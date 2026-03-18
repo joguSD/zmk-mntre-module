@@ -1,5 +1,4 @@
 #pragma once
-#include <stdint.h>
 
 void reform_sysctrl_power_on();
 void reform_sysctrl_power_off();
