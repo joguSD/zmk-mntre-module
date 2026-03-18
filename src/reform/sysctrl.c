@@ -151,7 +151,7 @@ static void reform_sysctrl_flush() {
 static int reform_sysctrl_cmd(const char *cmd, char *res_buf) {
   reform_sysctrl_flush();
   print_uart(cmd);
-  while (k_msgq_get(&uart_msgq, res_buf, K_MSEC(200)) == 0) {
+  if (k_msgq_get(&uart_msgq, res_buf, K_MSEC(200)) == 0) {
     // res_buf will have response
     return 1;
   }
