@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "font.c"
+#include <reform/font.h>
 #include <reform/matrix.h>
 
 void matrix_write_char_inner(struct character_matrix *matrix, uint8_t c) {
