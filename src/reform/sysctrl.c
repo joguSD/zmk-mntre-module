@@ -11,6 +11,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
+#include <reform/constants.h>
 #include <reform/display.h>
 #include <reform/matrix.h>
 
@@ -276,7 +277,7 @@ static void power_off_work_handler(struct k_work *work) {
 }
 
 static void status_work_handler(struct k_work *work) {
-#ifndef CONFIG_MNT_REFORM_STANDALONE
+#if CONFIG_MNT_REFORM_MODE != MNT_REFORM_MODE_STANDALONE
   int ret = reform_sysctrl_cmd("s\r", status_response);
   if (ret) {
     display_request_render(status_render_callback);

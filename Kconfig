@@ -1,12 +1,9 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright 2026 joguSD
-config MNT_REFORM_CLASSIC
-    bool "MNT Reform Classic laptop mode"
-    default n
-
-config MNT_REFORM_STANDALONE
-    bool "Standalone keyboard without sysctrl"
-    default n
+config MNT_REFORM_MODE
+    int "MNT Reform mode (0=standalone, 1=classic, 2=next)"
+    default 0
+    range 0 2
 
 config ZMK_BEHAVIOR_MENU
     bool

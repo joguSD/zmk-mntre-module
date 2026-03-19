@@ -4,7 +4,7 @@
 */
 
 #include <behaviors.dtsi>
-#ifdef CONFIG_MNT_REFORM_STANDALONE
+#if CONFIG_MNT_REFORM_MODE == 0 /* MNT_REFORM_MODE_STANDALONE */
 #include <behaviors/reform_menu_standalone.dtsi>
 #else
 #include <behaviors/reform_menu.dtsi>

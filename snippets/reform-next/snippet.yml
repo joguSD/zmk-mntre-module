@@ -1,0 +1,4 @@
+name: reform-next
+append:
+  EXTRA_CONF_FILE: reform-next.conf
+  DTS_EXTRA_CPPFLAGS: -DCONFIG_MNT_REFORM_MODE=2

@@ -8,17 +8,15 @@
 # board: [ "reform" ]
 # shield: [ "corne_left", "corne_right" ]
 include:
-  # - board: reform
-  #   artifact-name: reform_zmk
   - board: reform
     snippet: rp2-boot-mode-retention studio-rpc-usb-uart
-    cmake-args: -DCONFIG_ZMK_STUDIO=y
-    artifact-name: reform
-  - board: reform
-    snippet: rp2-boot-mode-retention studio-rpc-usb-uart reform-standalone
     cmake-args: -DCONFIG_ZMK_STUDIO=y
     artifact-name: reform_standalone
   - board: reform
     snippet: rp2-boot-mode-retention studio-rpc-usb-uart reform-classic
     cmake-args: -DCONFIG_ZMK_STUDIO=y
     artifact-name: reform_classic
+  - board: reform
+    snippet: rp2-boot-mode-retention studio-rpc-usb-uart reform-next
+    cmake-args: -DCONFIG_ZMK_STUDIO=y
+    artifact-name: reform_next
