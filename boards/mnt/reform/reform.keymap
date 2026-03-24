@@ -11,6 +11,7 @@
 #endif
 #include <behaviors/reform_sysctrl.dtsi>
 #include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/mouse.h>
 #include <dt-bindings/zmk/rgb.h>
 
 #define BASE  0
@@ -77,6 +78,9 @@
                 &kp LCTRL &kp A     &kp S     &kp D     &kp F     &kp G     &kp H     &kp J     &kp K     &kp L     &kp SEMI  &kp SQT   &kp ENTER
                 &kp LSHFT &kp DEL   &kp Z     &kp X     &kp C     &kp V     &kp B     &kp N     &kp M     &kp COMMA &kp DOT   &kp FSLH  &kp UP    &kp RSHFT
                 &mo HYPER &kp LGUI  &kp LALT  &kp SPACE &kp SPACE           &kp SPACE &kp RALT  &kp RCTRL &kp LEFT  &kp DOWN  &kp RIGHT
+#if CONFIG_MNT_REFORM_MODE == 2 /* MNT_REFORM_MODE_NEXT */
+                &mkp LCLK &mkp MCLK &mkp RCLK
+#endif
             >;
         };
 
@@ -103,6 +107,9 @@
                 &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans
                 &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans
                 &trans    &trans    &trans    &trans    &trans              &trans    &trans    &trans    &trans    &trans    &trans
+#if CONFIG_MNT_REFORM_MODE == 2 /* MNT_REFORM_MODE_NEXT */
+                &trans    &trans    &trans
+#endif
             >;
         };
     };

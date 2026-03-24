@@ -1,0 +1,63 @@
+/*
+  SPDX-License-Identifier: GPL-3.0-or-later
+  Copyright 2026 joguSD
+
+  Reform Next overlay: adds trackpad button support via PCAL6416A GPIO expander.
+  Trackpad touch (IQS9150) is not yet implemented.
+*/
+
+#include <dt-bindings/zmk/matrix_transform.h>
+
+&i2c0 {
+    trackpad_buttons: pcal6416a@20 {
+        compatible = "nxp,pcal6416a";
+        reg = <0x20>;
+        gpio-controller;
+        #gpio-cells = <2>;
+        ngpios = <16>;
+    };
+};
+
+/ {
+    kscan_trackpad: kscan_trackpad {
+        compatible = "zmk,kscan-gpio-direct";
+        input-gpios
+            = <&trackpad_buttons 13 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>  /* P1_5 - SW1 - Left */
+            , <&trackpad_buttons 12 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>  /* P1_4 - SW2 - Middle */
+            , <&trackpad_buttons 11 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>  /* P1_3 - SW3 - Right */
+            ;
+    };
+
+    kscan_composite: kscan_composite {
+        compatible = "zmk,kscan-composite";
+        columns = <14>;
+        rows = <7>;
+
+        keyboard {
+            kscan = <&kscan0>;
+        };
+
+        trackpad {
+            kscan = <&kscan_trackpad>;
+            row-offset = <6>;
+        };
+    };
+
+    chosen {
+        zmk,kscan = &kscan_composite;
+    };
+};
+
+&default_transform {
+    columns = <14>;
+    rows = <7>;
+    map = <
+        RC(0,0) RC(0,1) RC(0,2) RC(0,3) RC(0,4) RC(0,5) RC(0,6) RC(0,7) RC(0,8) RC(0,9) RC(0,10) RC(0,11) RC(0,12) RC(0,13)
+        RC(1,0) RC(1,1) RC(1,2) RC(1,3) RC(1,4) RC(1,5) RC(1,6) RC(1,7) RC(1,8) RC(1,9) RC(1,10) RC(1,11) RC(1,12) RC(1,13)
+        RC(2,0) RC(2,1) RC(2,2) RC(2,3) RC(2,4) RC(2,5) RC(2,6) RC(2,7) RC(2,8) RC(2,9) RC(2,10) RC(2,11) RC(2,12) RC(2,13)
+        RC(3,0) RC(3,1) RC(3,2) RC(3,3) RC(3,4) RC(3,5) RC(3,6) RC(3,7) RC(3,8) RC(3,9) RC(3,10) RC(3,11) RC(3,12)
+        RC(4,0) RC(4,1) RC(4,2) RC(4,3) RC(4,4) RC(4,5) RC(4,6) RC(4,7) RC(4,8) RC(4,9) RC(4,10) RC(4,11) RC(4,12) RC(4,13)
+        RC(5,0) RC(5,1) RC(5,2) RC(5,3) RC(5,4)         RC(5,6) RC(5,7) RC(5,8) RC(5,9) RC(5,10) RC(5,11)
+        RC(6,0) RC(6,1) RC(6,2)
+    >;
+};

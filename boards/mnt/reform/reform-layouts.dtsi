@@ -86,6 +86,11 @@
             , <&key_physical_attrs 100 100 1125  500       0     0     0>
             , <&key_physical_attrs 100 100 1225  500       0     0     0>
             , <&key_physical_attrs 125 100 1325  500       0     0     0>
+#if CONFIG_MNT_REFORM_MODE == 2 /* MNT_REFORM_MODE_NEXT */
+            , <&key_physical_attrs 150 100  500  675       0     0     0>
+            , <&key_physical_attrs 125 100  650  675       0     0     0>
+            , <&key_physical_attrs 150 100  775  675       0     0     0>
+#endif
             ;
     };
 };
