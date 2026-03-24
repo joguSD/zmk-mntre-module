@@ -56,9 +56,9 @@ With ZMK Studio support enabled:
 west build -p -b reform -S studio-rpc-usb-uart -S rp2-boot-mode-retention -- -DZMK_EXTRA_MODULES="/some/path/zmk-mntre-module" -DCONFIG_ZMK_STUDIO=yes
 ```
 
-Additional snippets can be added to build for either the MNT Reform Classic or in standalone mode:
-* `-S reform-standalone`
+Additional snippets can be added to build for either the MNT Reform Classic or MNT Reform Next mode:
 * `-S reform-classic`
+* `-S reform-next`
 
 ## References
 
