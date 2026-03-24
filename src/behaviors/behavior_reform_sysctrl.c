@@ -55,10 +55,66 @@ on_reform_sysctrl_binding_released(struct zmk_behavior_binding *binding,
   return ZMK_BEHAVIOR_OPAQUE;
 }
 
+#if IS_ENABLED(CONFIG_ZMK_BEHAVIOR_METADATA)
+
+static const struct behavior_parameter_value_metadata no_arg_values[] = {
+    {.display_name = "System Status",
+     .type = BEHAVIOR_PARAMETER_VALUE_TYPE_VALUE,
+     .value = RSC_STATUS_CMD},
+    {.display_name = "Battery Status",
+     .type = BEHAVIOR_PARAMETER_VALUE_TYPE_VALUE,
+     .value = RSC_CHARGE_CMD},
+    {.display_name = "Wake",
+     .type = BEHAVIOR_PARAMETER_VALUE_TYPE_VALUE,
+     .value = RSC_WAKE_CMD},
+};
+
+static const struct behavior_parameter_metadata_set no_arg_set = {
+    .param1_values = no_arg_values,
+    .param1_values_len = ARRAY_SIZE(no_arg_values),
+};
+
+static const struct behavior_parameter_value_metadata power_param1_values[] = {
+    {.display_name = "Power",
+     .type = BEHAVIOR_PARAMETER_VALUE_TYPE_VALUE,
+     .value = RSC_POWER_CMD},
+};
+
+static const struct behavior_parameter_value_metadata power_param2_values[] = {
+    {.display_name = "Off",
+     .type = BEHAVIOR_PARAMETER_VALUE_TYPE_VALUE,
+     .value = 0},
+    {.display_name = "On",
+     .type = BEHAVIOR_PARAMETER_VALUE_TYPE_VALUE,
+     .value = 1},
+};
+
+static const struct behavior_parameter_metadata_set power_set = {
+    .param1_values = power_param1_values,
+    .param1_values_len = ARRAY_SIZE(power_param1_values),
+    .param2_values = power_param2_values,
+    .param2_values_len = ARRAY_SIZE(power_param2_values),
+};
+
+static const struct behavior_parameter_metadata_set metadata_sets[] = {
+    no_arg_set,
+    power_set,
+};
+
+static const struct behavior_parameter_metadata metadata = {
+    .sets_len = ARRAY_SIZE(metadata_sets),
+    .sets = metadata_sets,
+};
+
+#endif // IS_ENABLED(CONFIG_ZMK_BEHAVIOR_METADATA)
+
 // API struct
 static const struct behavior_driver_api reform_sysctrl_driver_api = {
     .binding_pressed = on_reform_sysctrl_binding_pressed,
     .binding_released = on_reform_sysctrl_binding_released,
+#if IS_ENABLED(CONFIG_ZMK_BEHAVIOR_METADATA)
+    .parameter_metadata = &metadata,
+#endif
 };
 
 BEHAVIOR_DT_INST_DEFINE(

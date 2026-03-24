@@ -27,8 +27,6 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
 #if DT_HAS_COMPAT_STATUS_OKAY(DT_DRV_COMPAT)
 
-// TODO Metadata?
-
 // Global state tracking across all menus
 const struct device *active_menu_dev;
 static struct character_matrix character_matrix;
@@ -97,6 +95,9 @@ static int on_menu_binding_released(struct zmk_behavior_binding *binding,
 static const struct behavior_driver_api menu_driver_api = {
     .binding_pressed = on_menu_binding_pressed,
     .binding_released = on_menu_binding_released,
+#if IS_ENABLED(CONFIG_ZMK_BEHAVIOR_METADATA)
+    .get_parameter_metadata = zmk_behavior_get_empty_param_metadata,
+#endif
 };
 
 #define ZMK_VIRTUAL_KEY_POSITION_MENU(index)                                   \
