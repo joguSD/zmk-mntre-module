@@ -66,6 +66,27 @@ Additional snippets can be added to build for either the MNT Reform Classic or M
 * `-S reform-classic`
 * `-S reform-next`
 
+## Custom Behaviors
+This firmware exposes two custom behaviors to provide the full functionality expected for an MNT Reform laptop keyboard.
+
+These are bound to keys matching the original firmware, but can be freely rebound to any key in code or via ZMK Studio.
+
+* **Reform Menu** - Code binding: `&reform_menu`
+    * This is bound to the Circle key by default, but can be re-bound to anything
+    * Provides an interactive menu to basic keyboard functionality (RGB, Reset, Flashing, Reform System Control)
+    * Menu is navigated using the arrow keys, select an item with enter.
+        * These are keycode based, not physical layout based, and will respect any re-mappings.
+    * Menu items can be invoked directly without navigating via their hotkey
+    * **NOTE - Be careful when removing the binding to the Reform menu and ensure you have bindings to it's functionality elsewhere**
+    * **NOTE - Be sure you have a keybinding to unlock ZMK studio before removing the menu binding or you could get locked out from configuration**
+* **Reform System Control** - Code binding: `&reform_sysctrl`
+    * Parameters are provided in `#include <dt-bindings/zmk/reform_sysctrl.h>`
+    * `&reform_sysctrl R_PWR_ON` - Sends system control command to power on laptop
+    * `&reform_sysctrl R_PWR_OFF` - Sends system control command to power off laptop
+    * `&reform_sysctrl R_WAKE` - Sends system control command to wake the laptop
+    * `&reform_sysctrl R_BATT` - Sends system control command to retrieve battery state and renders it to the OLED
+    * `&reform_sysctrl R_STATUS` - Sends system control command to get firmware info and renders it to the OLED
+
 ## References
 
 * [MNT Reform Shop link for this keyboard](https://shop.mntre.com/products/mnt-reform-keyboard-30)
