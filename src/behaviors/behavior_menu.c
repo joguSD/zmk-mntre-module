@@ -181,13 +181,13 @@ static int menu_keycode_state_changed_listener(const zmk_event_t *eh) {
   const struct behavior_menu_config *config = active_menu_dev->config;
   struct behavior_menu_data *data = active_menu_dev->data;
 
-  if (ev->keycode == HID_USAGE_KEY_KEYBOARD_UPARROW && !ev->state) {
+  if (ev->keycode == HID_USAGE_KEY_KEYBOARD_UPARROW && ev->state) {
     menu_cycle_up();
     menu_schedule_render();
     return ZMK_EV_EVENT_HANDLED;
   }
 
-  if (ev->keycode == HID_USAGE_KEY_KEYBOARD_DOWNARROW && !ev->state) {
+  if (ev->keycode == HID_USAGE_KEY_KEYBOARD_DOWNARROW && ev->state) {
     menu_cycle_down();
     menu_schedule_render();
     return ZMK_EV_EVENT_HANDLED;
@@ -217,6 +217,7 @@ static int menu_keycode_state_changed_listener(const zmk_event_t *eh) {
           .timestamp = ev->timestamp,
       };
       zmk_behavior_invoke_binding(&item->behavior, event, ev->state);
+      return ZMK_EV_EVENT_HANDLED;
     }
   }
 
