@@ -62,9 +62,9 @@
         bindings = <&sys_reset>;
       };
       item9 {
-        text = "Reset USB           u";
+        text = "ZMK Studio Unlock   u";
         key = <U>;
-        bindings = <&sys_reset>;
+        bindings = <&studio_unlock>;
       };
       item10 {
         text = "USB Flashing Mode   x";
