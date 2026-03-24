@@ -15,7 +15,9 @@ implemented but untested as I do not have any laptop hardware at the moment.
 
 * If this happens, the keyboard can be reset by pressing `CIRCLE -> R`
 * The keyboard can be put into flashing mode by pressing `CIRCLE -> X`
-* The keyboard can unlocked for modification in ZMK Studio by pressing `CIRCLE -> U`
+* The keyboard can unlocked for modification in ZMK Studio by pressing:
+    * `CIRCLE -> U`
+    * `HYPER + U`
 
 ## Functional
 * Reform device tree and pinctrl
