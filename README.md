@@ -4,11 +4,10 @@
 
 This is an unofficial port of the ZMK firmware to the MNT Reform Keyboard V4.0 based on the RP2040 MCU.
 
-Initially, I aim to get all of the hardware working under ZMK and support the standalone keyboard usecase.
+Using this firmware as a standalone keyboard is currently fully supported and functional.
 
-In the future, I hope to implement full support for the laptop usecase as well.
-
-![ZMK Studio Screenshot](https://github.com/user-attachments/assets/8b30a9c6-927b-4d7e-b47d-196373f5c54a)
+Using this firmware within a Reform laptop (Classic & Next) is largely
+implemented but untested as I do not have any laptop hardware at the moment.
 
 # Status
 
@@ -25,13 +24,17 @@ In the future, I hope to implement full support for the laptop usecase as well.
     * does not use ZMK's display widgets
 * Menu - Custom Menu ZMK Behavior
     * Matches the circle menu from original firmware
-    * MNT Reform system controller support
+* MNT Reform system controller support
 * Settings saving & loading
 * Physical keyboard layout definition
 * ZMK Studio Support
 
+![ZMK Studio Screenshot](https://github.com/user-attachments/assets/8b30a9c6-927b-4d7e-b47d-196373f5c54a)
+
+## Planned
+* MNT Reform Next Trackpad support
+
 ## No plan yet
-* Trackball, Trackpad support
 * MNT Reform Pocket support
 
 # Testing
