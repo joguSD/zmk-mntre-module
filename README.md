@@ -17,7 +17,7 @@ implemented but untested as I do not have any laptop hardware at the moment.
 * The keyboard can be put into flashing mode by pressing `CIRCLE -> X`
 * The keyboard can unlocked for modification in ZMK Studio by pressing:
     * `CIRCLE -> U`
-    * `HYPER + U`
+    * Hold the top-left key (ESC by default) for 5 seconds
 
 ## Functional
 * Reform device tree and pinctrl
@@ -78,7 +78,6 @@ These are bound to keys matching the original firmware, but can be freely reboun
         * These are keycode based, not physical layout based, and will respect any re-mappings.
     * Menu items can be invoked directly without navigating via their hotkey
     * **NOTE - Be careful when removing the binding to the Reform menu and ensure you have bindings to it's functionality elsewhere**
-    * **NOTE - Be sure you have a keybinding to unlock ZMK studio before removing the menu binding or you could get locked out from configuration**
 * **Reform System Control** - Code binding: `&reform_sysctrl`
     * Parameters are provided in `#include <dt-bindings/zmk/reform_sysctrl.h>`
     * `&reform_sysctrl R_PWR_ON` - Sends system control command to power on laptop
