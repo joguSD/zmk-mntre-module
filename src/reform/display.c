@@ -14,6 +14,7 @@
 
 #include <reform/constants.h>
 #include <reform/display.h>
+#include <reform/matrix.h>
 
 LOG_MODULE_DECLARE(mnt, CONFIG_MNT_LOG_LEVEL);
 
@@ -27,51 +28,27 @@ static struct display_buffer_descriptor desc = {
     .height = DISPLAY_HEIGHT,
     .pitch = DISPLAY_WIDTH,
 };
-static uint8_t logo[BUFFER_SIZE] = {
-    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,  0,
-    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,  0,
-    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,  128,
-    128, 128, 128, 128, 128, 192, 64,  128, 0,   0,   0,   0,   0,   0,  0,
-    0,   0,   128, 0,   0,   0,   0,   0,   0,   0,   0,   0,   128, 0,  0,
-    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,  0,
-    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,  0,
-    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,  0,
-    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,  0,
-    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,  0,
-    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,  0,
-    0,   0,   0,   14,  249, 65,  65,  64,  96,  32,  32,  32,  32,  32, 32,
-    63,  240, 0,   0,   0,   0,   0,   0,   0,   0,   1,   3,   6,   12, 0,
-    0,   0,   0,   0,   192, 127, 0,   0,   0,   8,   12,  6,   3,   0,  0,
-    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,  0,
-    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,  0,
-    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,  0,
-    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,  0,
-    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,  0,
-    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   128, 112, 31,  8,  4,
-    4,   4,   4,   4,   6,   2,   2,   2,   2,   253, 0,   0,   0,   0,  0,
-    0,   0,   1,   1,   1,   1,   129, 193, 97,  61,  7,   1,   1,   1,  1,
-    255, 153, 1,   1,   1,   1,   1,   129, 129, 192, 0,   0,   0,   0,  0,
-    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,  0,
-    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,  0,
-    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,  0,
-    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,  0,
-    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,  0,
-    0,   2,   3,   1,   0,   0,   0,   0,   0,   0,   0,   0,   0,   3,  2,
-    2,   6,   3,   0,   0,   0,   0,   0,   0,   0,   0,   2,   3,   1,  1,
-    0,   0,   0,   0,   0,   0,   0,   0,   0,   1,   1,   1,   1,   1,  1,
-    1,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,  0,
-    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,  0,
-    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,  0,
-    0,   0,
-};
+static uint8_t logo[BUFFER_SIZE];
 static uint8_t display_buffer[BUFFER_SIZE];
 static atomic_ptr_t render_callback;
+static struct character_matrix logo_matrix;
 
 K_SEM_DEFINE(render_sem, 0, 1);
 K_THREAD_STACK_DEFINE(display_work_stack_area, DISPLAY_THREAD_STACK_SIZE);
 static struct k_thread display_thread_data;
 
 void buffer_clear() { memset(display_buffer, 0, BUFFER_SIZE); }
+
+static void render_logo() {
+  // MNT logo: 12x3 glyphs at font positions (5+y)*32+x, centered on rows 1-3
+  matrix_clear(&logo_matrix);
+  for (uint8_t y = 0; y < 3; y++) {
+    for (uint8_t x = 0; x < 12; x++) {
+      matrix_poke(&logo_matrix, x + 4, y + 1, (5 + y) * 32 + x);
+    }
+  }
+  matrix_render(&logo_matrix, logo, -1);
+}
 
 void buffer_logo() { memcpy(display_buffer, logo, BUFFER_SIZE); }
 
@@ -102,6 +79,7 @@ static void reform_display_render_loop(void *p1, void *p2, void *p3) {
     return;
   }
 
+  render_logo();
   buffer_clear();
   buffer_logo();
   buffer_show();
