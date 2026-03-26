@@ -44,7 +44,7 @@ implemented but untested as I do not have any laptop hardware at the moment.
 
 ## Using a prebuilt uf2 firmware
 
-* Download the most recent build from the [GitHub Actions tab](https://github.com/joguSD/zmk-mntre-module/actions)
+* Download the most recent build from the [latest release](https://github.com/joguSD/zmk-mntre-module/releases/latest)
 
 ## Building from source
 
