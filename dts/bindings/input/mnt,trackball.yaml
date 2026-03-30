@@ -1,0 +1,24 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright 2026 joguSD
+
+description: PAT9125EL trackball (polling, no motion interrupt)
+
+compatible: "mnt,trackball"
+
+include: i2c-device.yaml
+
+properties:
+  invert-x:
+    type: boolean
+    description: Invert X axis
+  invert-y:
+    type: boolean
+    description: Invert Y axis
+  res-x-cpi:
+    type: int
+    default: 100
+    description: X axis resolution in CPI (5-1275)
+  res-y-cpi:
+    type: int
+    default: 100
+    description: Y axis resolution in CPI (5-1275)

@@ -1,0 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright 2026 joguSD
+
+config BOARD_POCKET_REFORM
+    select RP2_FLASH_W25Q080

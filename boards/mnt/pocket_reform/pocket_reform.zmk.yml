@@ -1,0 +1,14 @@
+file_format: "1"
+id: pocket_reform
+name: MNT Pocket Reform Keyboard
+type: board
+arch: arm
+features:
+  - keys
+  - display
+  - underglow
+  - pointer
+  - studio
+outputs:
+  - usb
+url: https://mntre.com/
