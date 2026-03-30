@@ -5,6 +5,12 @@ config MNT_REFORM_MODE
     default 0
     range 0 2
 
+config MNT_TRACKBALL
+    bool "MNT Reform polling trackball driver"
+    default y
+    depends on DT_HAS_MNT_TRACKBALL_ENABLED
+    select I2C
+
 config ZMK_BEHAVIOR_MENU
     bool
     default y

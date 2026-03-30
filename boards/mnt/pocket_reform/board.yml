@@ -1,0 +1,6 @@
+board:
+  name: pocket_reform
+  full_name: Pocket Reform
+  vendor: mnt
+  socs:
+  - name: rp2040
