@@ -184,6 +184,10 @@ zephyr_udc0: &usbd {
       };
 };
 
+&dma {
+    status = "okay";
+};
+
 &pio0 {
     status = "okay";
 
@@ -203,6 +207,8 @@ zephyr_udc0: &usbd {
             LED_COLOR_ID_BLUE>;
             reset-delay = <280>;
             frequency = <800000>;
+            dmas = <&dma 0 0 0>;
+            dma-names = "tx";
         };
     };
 };
