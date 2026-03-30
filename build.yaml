@@ -20,3 +20,11 @@ include:
     snippet: rp2-boot-mode-retention studio-rpc-usb-uart reform-next
     cmake-args: -DCONFIG_ZMK_STUDIO=y
     artifact-name: reform_next
+  - board: reform_pocket
+    snippet: rp2-boot-mode-retention studio-rpc-usb-uart
+    cmake-args: -DCONFIG_ZMK_STUDIO=y
+    artifact-name: reform_pocket_standalone
+  - board: reform_pocket
+    snippet: rp2-boot-mode-retention studio-rpc-usb-uart reform-pocket
+    cmake-args: -DCONFIG_ZMK_STUDIO=y
+    artifact-name: reform_pocket
