@@ -5,9 +5,15 @@ module-str = mnt
 source "subsys/logging/Kconfig.template.log_config"
 
 config MNT_REFORM_MODE
-    int "MNT Reform mode (0=standalone, 1=classic, 2=next)"
+    int "MNT Reform mode (0=standalone, 1=classic, 2=next, 3=pocket)"
     default 0
-    range 0 2
+    range 0 3
+
+config MNT_TRACKBALL
+    bool "MNT Reform polling trackball driver"
+    default y
+    depends on DT_HAS_MNT_TRACKBALL_ENABLED
+    select I2C
 
 config ZMK_BEHAVIOR_MENU
     bool

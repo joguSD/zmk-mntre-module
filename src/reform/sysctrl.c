@@ -74,6 +74,20 @@ static void insert_bat_icon(char *str, int x, double v) {
   str[x + 1] = BAT_ICON_BASE + level + 1;
 }
 
+#if CONFIG_MNT_REFORM_MODE == MNT_REFORM_MODE_POCKET
+#define BAT_CELL_COLUMNS 1
+#define BAT_CELL_ROWS 2
+#else
+#define BAT_CELL_COLUMNS 2
+#define BAT_CELL_ROWS 4
+#endif
+
+#define BAT_SLOTS_PER_PACK 4
+#define BAT_COLUMN_WIDTH 8
+#define BAT_GAUGE_X 17
+#define BAT_POWER_X 18
+#define BAT_VALUE_X 15
+
 // Parse sysctrl 'c' response and render 4-row battery display with icons
 // Response format: "39 39 39 39 39 39 39 39 mA-1234mV12345 069% P1"
 //                   0  3  6  9  12 15 18 21 24 26    33    39   44
@@ -94,8 +108,8 @@ static void battery_render_callback(uint8_t *buffer) {
   int ai = amps_offset;
   if (r[ai] == '-') {
     amps_sign = -1;
-    ai++;
   }
+  ai++;
   int amps_raw = 0;
   while (ai < amps_offset + 5 && r[ai] >= '0' && r[ai] <= '9') {
     amps_raw = amps_raw * 10 + (r[ai++] - '0');
@@ -125,37 +139,27 @@ static void battery_render_callback(uint8_t *buffer) {
   matrix_clear(&character_matrix);
   char str[22];
 
-  // [##] 3.9  [##] 3.9   069%
-  snprintf(str, 22, "[] %.1f  [] %.1f   %s", voltages[0], voltages[4],
-           bat_gauge);
-  insert_bat_icon(str, 0, voltages[0]);
-  insert_bat_icon(str, 8, voltages[4]);
-  matrix_poke_str(&character_matrix, 0, 0, str);
+  for (int column = 0; column < BAT_CELL_COLUMNS; column++) {
+    for (int row = 0; row < BAT_CELL_ROWS; row++) {
+      double cell = voltages[column * BAT_SLOTS_PER_PACK + row];
+      snprintf(str, sizeof(str), "[] %.1f", cell);
+      insert_bat_icon(str, 0, cell);
+      matrix_poke_str(&character_matrix, column * BAT_COLUMN_WIDTH, row, str);
+    }
+  }
 
-  // [##] 3.9  [##] 3.9     On
-  snprintf(str, 22, "[] %.1f  [] %.1f    %s", voltages[1], voltages[5],
-           power_str);
-  insert_bat_icon(str, 0, voltages[1]);
-  insert_bat_icon(str, 8, voltages[5]);
-  matrix_poke_str(&character_matrix, 0, 1, str);
+  matrix_poke_str(&character_matrix, BAT_GAUGE_X, 0, bat_gauge);
 
-  // [##] 3.9  [##] 3.9  0.256A
+  matrix_poke_str(&character_matrix, BAT_POWER_X, 1, power_str);
+
   if (bat_amps >= 0)
-    snprintf(str, 22, "[] %.1f  [] %.1f %2.3fA", voltages[2], voltages[6],
-             bat_amps);
+    snprintf(str, sizeof(str), "%2.3fA", bat_amps);
   else
-    snprintf(str, 22, "[] %.1f  [] %.1f %2.2fA", voltages[2], voltages[6],
-             bat_amps);
-  insert_bat_icon(str, 0, voltages[2]);
-  insert_bat_icon(str, 8, voltages[6]);
-  matrix_poke_str(&character_matrix, 0, 2, str);
+    snprintf(str, sizeof(str), "%2.2fA", bat_amps);
+  matrix_poke_str(&character_matrix, BAT_VALUE_X, 2, str);
 
-  // [##] 3.9  [##] 3.9  12.34V
-  snprintf(str, 22, "[] %.1f  [] %.1f %2.2fV", voltages[3], voltages[7],
-           bat_volts);
-  insert_bat_icon(str, 0, voltages[3]);
-  insert_bat_icon(str, 8, voltages[7]);
-  matrix_poke_str(&character_matrix, 0, 3, str);
+  snprintf(str, sizeof(str), "%2.2fV", bat_volts);
+  matrix_poke_str(&character_matrix, BAT_VALUE_X, 3, str);
 
   matrix_render(&character_matrix, buffer, -1);
 }
@@ -254,9 +258,13 @@ static void reform_sysctrl_flush() {
   }
 }
 
-static int reform_sysctrl_cmd(const char *cmd, char *res_buf) {
+static void reform_sysctrl_send(const char *cmd) {
   reform_sysctrl_flush();
   print_uart(cmd);
+}
+
+static int reform_sysctrl_cmd(const char *cmd, char *res_buf) {
+  reform_sysctrl_send(cmd);
   if (k_msgq_get(&uart_msgq, res_buf, K_MSEC(200)) == 0) {
     return 1;
   }
@@ -267,13 +275,11 @@ static int reform_sysctrl_cmd(const char *cmd, char *res_buf) {
 }
 
 static void power_on_work_handler(struct k_work *work) {
-  char res_buf[REFORM_SYSCTRL_MSG_SIZE];
-  reform_sysctrl_cmd("1p\r", res_buf);
+  reform_sysctrl_send("1p\r");
 }
 
 static void power_off_work_handler(struct k_work *work) {
-  char res_buf[REFORM_SYSCTRL_MSG_SIZE];
-  reform_sysctrl_cmd("0p\r", res_buf);
+  reform_sysctrl_send("0p\r");
 }
 
 static void status_work_handler(struct k_work *work) {
@@ -297,8 +303,7 @@ static void battery_work_handler(struct k_work *work) {
 }
 
 static void wake_work_handler(struct k_work *work) {
-  char res_buf[REFORM_SYSCTRL_MSG_SIZE];
-  reform_sysctrl_cmd("1w\r", res_buf);
+  reform_sysctrl_send("1w\r");
 }
 
 #define SYSCTRL_CMD(sysctrl_cmd)                                               \

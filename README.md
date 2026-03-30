@@ -1,17 +1,24 @@
-# ZMK Module for MNT Reform Keyboard
+# ZMK Module for MNT Reform Keyboards
 
-**NOTE: This firmware is a work in progress and is not stable. Use at your own risk.**
+**NOTE: This firmware is a work in progress. Use at your own risk.**
 
-This is an unofficial port of the ZMK firmware to the MNT Reform Keyboard V4.0 based on the RP2040 MCU.
+This is an unofficial port of the ZMK firmware to the MNT Reform and MNT Pocket Reform.
 
-Using this firmware as a standalone keyboard is currently fully supported and functional.
+Supported are:
+* Reform Keyboard V4.0
+* Pocket Reform
 
-Using this firmware within a Reform laptop (Classic & Next) is largely
+Using this firmware on a standalone keyboard is currently fully supported and functional.
+
+Using this firmware within a Reform laptop (Classic, Next, Pocket) is largely
 implemented but untested as I do not have any laptop hardware at the moment.
 
 # Status
 
-**The USB HID is currently unstable and will crash often making the keyboard unresponsive to the host**
+The Pocket Reform builds are stable and should be suitable for daily driving.
+
+On the standard Reform Keyboard the USB HID is currently unstable and will
+crash often making the keyboard unresponsive to the host.
 
 * If this happens, the keyboard can be reset by pressing `CIRCLE -> R`
 * The keyboard can be put into flashing mode by pressing `CIRCLE -> X`
@@ -33,12 +40,13 @@ implemented but untested as I do not have any laptop hardware at the moment.
 * ZMK Studio Support
 * MNT Reform Next Trackpad
     * Mouse emulation, simple gestures (on-engine)
+* MNT Pocket Reform
+    * Fully functional
 
 ![ZMK Studio Screenshot](https://github.com/user-attachments/assets/8b30a9c6-927b-4d7e-b47d-196373f5c54a)
 
 ## Planned
 * Precision Trackpad HID support for advanced multitouch gestures
-* MNT Reform Pocket support
 
 # Testing
 
@@ -62,14 +70,23 @@ With ZMK Studio support enabled:
 west build -p -b reform -S studio-rpc-usb-uart -S rp2-boot-mode-retention -- -DZMK_EXTRA_MODULES="/some/path/zmk-mntre-module" -DCONFIG_ZMK_STUDIO=yes
 ```
 
-Additional snippets can be added to build for either the MNT Reform Classic or MNT Reform Next mode:
+For the MNT Pocket Reform keyboard, use the `reform_pocket` board:
+
+```
+west build -p -b reform_pocket -S studio-rpc-usb-uart -S rp2-boot-mode-retention -- -DZMK_EXTRA_MODULES="/some/path/zmk-mntre-module" -DCONFIG_ZMK_STUDIO=yes
+```
+
+Additional snippets can be added to build for laptop cases: MNT Reform Classic, MNT Reform Next, or MNT Pocket Reform:
 * `-S reform-classic`
 * `-S reform-next`
+* `-S reform-pocket`
 
 ## Custom Behaviors
 This firmware exposes two custom behaviors to provide the full functionality expected for an MNT Reform laptop keyboard.
 
 These are bound to keys matching the original firmware, but can be freely rebound to any key in code or via ZMK Studio.
+
+**NOTE - Be careful when removing the binding to the Reform menu and ensure you have bindings to it's functionality elsewhere**
 
 * **Reform Menu** - Code binding: `&reform_menu`
     * This is bound to the Circle key by default, but can be re-bound to anything
@@ -77,7 +94,6 @@ These are bound to keys matching the original firmware, but can be freely reboun
     * Menu is navigated using the arrow keys, select an item with enter.
         * These are keycode based, not physical layout based, and will respect any re-mappings.
     * Menu items can be invoked directly without navigating via their hotkey
-    * **NOTE - Be careful when removing the binding to the Reform menu and ensure you have bindings to it's functionality elsewhere**
 * **Reform System Control** - Code binding: `&reform_sysctrl`
     * Parameters are provided in `#include <dt-bindings/zmk/reform_sysctrl.h>`
     * `&reform_sysctrl R_PWR_ON` - Sends system control command to power on laptop
@@ -92,6 +108,8 @@ These are bound to keys matching the original firmware, but can be freely reboun
 * [Official Firmware Source](https://source.mnt.re/reform/reform/-/tree/master/reform2-keyboard4-fw?ref_type=heads)
 * [Keyboard PCB Source](https://source.mnt.re/reform/reform/-/tree/master/reform2-keyboard4-pcb?ref_type=heads)
 * [Keyboard Schematic](https://mntre.com/documentation/reform-handbook/schematics.html#keyboard-schematics)
+* [Pocket Reform Source](https://source.mnt.re/reform/pocket-reform)
+* [Pocket Reform Keyboard](https://shop.mntre.com/products/mnt-pocket-reform-standalone-keyboard)
 
 ## License
 
