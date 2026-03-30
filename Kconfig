@@ -40,6 +40,13 @@ config ZMK_INPUT_PROCESSOR_INC_DEC
     default y
     depends on DT_HAS_ZMK_INPUT_PROCESSOR_INC_DEC_ENABLED
 
+config MNT_WS2812_RPI_PICO_PIO_DMA
+    bool "Backported DMA-capable WS2812 RP2040 PIO driver"
+    default y
+    depends on DT_HAS_MNT_WS2812_RPI_PICO_PIO_ENABLED
+    select PICOSDK_USE_PIO
+    select PICOSDK_USE_DMA
+
 config RP2040_SLEEP
     bool "RP2040 sleep mode driver"
     default y

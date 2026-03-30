@@ -2,6 +2,7 @@
   SPDX-License-Identifier: GPL-3.0-or-later
   Copyright 2026 joguSD
 */
+#include <stdio.h>
 #include <string.h>
 
 #include <zephyr/app_version.h>
