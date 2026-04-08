@@ -9,11 +9,10 @@
 #include <dt-bindings/led/led.h>
 #include <dt-bindings/zmk/input_transform.h>
 #include <dt-bindings/zmk/matrix_transform.h>
-#include <dt-bindings/zmk/rgb_control.h>
 
 #include <input/processors.dtsi>
 #include <input/processors/quadratic_scaler.dtsi>
-#include <input/processors/rgb_control.dtsi>
+#include <input/processors/inc_dec.dtsi>
 
 #include "reform-pinctrl.dtsi"
 #include "reform-layouts.dtsi"
@@ -51,7 +50,7 @@
 
         rgb_mode {
             layers = <1>;
-            input-processors = <&zip_x_rgb RGB_CTRL_HUE>, <&zip_y_rgb RGB_CTRL_SAT>;
+            input-processors = <&zip_x_rgb_hue>, <&zip_y_rgb_sat>;
         };
     };
 

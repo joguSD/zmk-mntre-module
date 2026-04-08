@@ -35,3 +35,8 @@ config ZMK_BEHAVIOR_MENU_TODO
       Placeholder for menu configuration, delete if not needed
 
 endif #ZMK_BEHAVIOR_MENU
+
+config ZMK_INPUT_PROCESSOR_INC_DEC
+    bool "Inc/Dec input processor"
+    default y
+    depends on DT_HAS_ZMK_INPUT_PROCESSOR_INC_DEC_ENABLED
