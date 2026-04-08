@@ -5,6 +5,23 @@ config MNT_REFORM_MODE
     default 0
     range 0 2
 
+config AZ1UBALL
+    bool "AZ1UBALL 1U trackball module driver"
+    default y
+    depends on DT_HAS_PALETTE_AZ1UBALL_ENABLED
+    select I2C
+
+config ZMK_INPUT_PROCESSOR_QUADRATIC_SCALER
+    bool "Quadratic input processor scaler"
+    default y
+    depends on DT_HAS_ZMK_INPUT_PROCESSOR_QUADRATIC_SCALER_ENABLED
+
+config ZMK_INPUT_PROCESSOR_RGB_CONTROL
+    bool "RGB control input processor"
+    default y
+    depends on DT_HAS_ZMK_INPUT_PROCESSOR_RGB_CONTROL_ENABLED
+    depends on ZMK_RGB_UNDERGLOW
+
 config ZMK_BEHAVIOR_MENU
     bool
     default y

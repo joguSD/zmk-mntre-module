@@ -1,0 +1,16 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright 2026 joguSD
+
+description: Quadratic input scaler (output = param1 * input^2)
+
+compatible: "zmk,input-processor-quadratic-scaler"
+
+include: ip_one_param.yaml
+
+properties:
+  type:
+    type: int
+    required: true
+  codes:
+    type: array
+    required: true

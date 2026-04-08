@@ -1,0 +1,16 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright 2026 joguSD
+
+description: AZ1UBALL 1U trackball module (I2C, polling)
+
+compatible: "palette,az1uball"
+
+include: i2c-device.yaml
+
+properties:
+  invert-x:
+    type: boolean
+    description: Invert X axis
+  invert-y:
+    type: boolean
+    description: Invert Y axis

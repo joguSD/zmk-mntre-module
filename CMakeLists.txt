@@ -38,6 +38,10 @@ zephyr_compile_definitions(
 
 target_include_directories(app PRIVATE include)
 
+target_sources_ifdef(CONFIG_AZ1UBALL app PRIVATE src/drivers/input/input_az1uball.c)
+target_sources_ifdef(CONFIG_ZMK_INPUT_PROCESSOR_QUADRATIC_SCALER app PRIVATE src/input_processors/input_processor_quadratic_scaler.c)
+target_sources_ifdef(CONFIG_ZMK_INPUT_PROCESSOR_RGB_CONTROL app PRIVATE src/input_processors/input_processor_rgb_control.c)
+
 if ((NOT CONFIG_ZMK_SPLIT) OR CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
     target_sources(app PRIVATE src/behaviors/behavior_menu.c)
     target_sources(app PRIVATE src/behaviors/behavior_reform_sysctrl.c)
