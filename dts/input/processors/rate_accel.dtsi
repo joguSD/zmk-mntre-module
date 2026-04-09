@@ -1,0 +1,16 @@
+/*
+  SPDX-License-Identifier: GPL-3.0-or-later
+  Copyright 2026 joguSD
+*/
+
+#include <zephyr/dt-bindings/input/input-event-codes.h>
+
+/ {
+    /omit-if-no-ref/ zip_xy_rate_accel: zip_xy_rate_accel {
+        compatible = "zmk,input-processor-rate-accel";
+        #input-processor-cells = <1>;
+        type = <INPUT_EV_REL>;
+        codes = <INPUT_REL_X INPUT_REL_Y>;
+        track-remainders;
+    };
+};

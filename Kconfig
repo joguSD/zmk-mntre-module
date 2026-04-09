@@ -40,3 +40,8 @@ config ZMK_INPUT_PROCESSOR_INC_DEC
     bool "Inc/Dec input processor"
     default y
     depends on DT_HAS_ZMK_INPUT_PROCESSOR_INC_DEC_ENABLED
+
+config ZMK_INPUT_PROCESSOR_RATE_ACCEL
+    bool "Rate-based acceleration input processor"
+    default y
+    depends on DT_HAS_ZMK_INPUT_PROCESSOR_RATE_ACCEL_ENABLED

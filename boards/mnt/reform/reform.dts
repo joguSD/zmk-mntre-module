@@ -12,6 +12,7 @@
 
 #include <input/processors.dtsi>
 #include <input/processors/quadratic_scaler.dtsi>
+#include <input/processors/rate_accel.dtsi>
 #include <input/processors/inc_dec.dtsi>
 
 #include "reform-pinctrl.dtsi"
@@ -46,7 +47,7 @@
     trackball_listener {
         compatible = "zmk,input-listener";
         device = <&az1uball>;
-        input-processors = <&zip_xy_quad_scaler 10>;
+        input-processors = <&zip_xy_rate_accel 100>;
 
         rgb_mode {
             layers = <1>;
