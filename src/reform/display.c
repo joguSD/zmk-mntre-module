@@ -16,7 +16,7 @@
 #include <reform/display.h>
 #include <reform/matrix.h>
 
-LOG_MODULE_DECLARE(mnt, CONFIG_MNT_LOG_LEVEL);
+LOG_MODULE_REGISTER(mnt, CONFIG_MNT_LOG_LEVEL);
 
 #define DISPLAY_THREAD_PRIORITY 5
 #define DISPLAY_THREAD_STACK_SIZE 2048

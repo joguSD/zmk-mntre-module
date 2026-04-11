@@ -1,5 +1,9 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright 2026 joguSD
+module = MNT
+module-str = mnt
+source "subsys/logging/Kconfig.template.log_config"
+
 config MNT_REFORM_MODE
     int "MNT Reform mode (0=standalone, 1=classic, 2=next)"
     default 0
