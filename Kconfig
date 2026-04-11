@@ -22,3 +22,9 @@ config ZMK_BEHAVIOR_MENU_TODO
       Placeholder for menu configuration, delete if not needed
 
 endif #ZMK_BEHAVIOR_MENU
+
+config IQS9150
+    bool "IQS9150 trackpad driver"
+    default y
+    depends on DT_HAS_AZOTEQ_IQS9150_ENABLED
+    select I2C

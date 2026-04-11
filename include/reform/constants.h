@@ -2,8 +2,8 @@
 #include <zephyr/devicetree.h>
 
 #define MNT_REFORM_MODE_STANDALONE 0
-#define MNT_REFORM_MODE_CLASSIC    1
-#define MNT_REFORM_MODE_NEXT       2
+#define MNT_REFORM_MODE_CLASSIC 1
+#define MNT_REFORM_MODE_NEXT 2
 
 #define FONT_WIDTH 6
 #define FONT_HEIGHT 8

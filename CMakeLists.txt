@@ -47,3 +47,5 @@ if ((NOT CONFIG_ZMK_SPLIT) OR CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
     target_sources(app PRIVATE src/reform/sysctrl.c)
     target_sources_ifdef(CONFIG_ZMK_STUDIO app PRIVATE src/reform/studio_unlock.c)
 endif() # ((NOT CONFIG_ZMK_SPLIT) OR CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
+
+target_sources_ifdef(CONFIG_IQS9150 app PRIVATE src/drivers/input/input_iqs9150.c)

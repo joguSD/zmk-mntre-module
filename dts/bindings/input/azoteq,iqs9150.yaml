@@ -1,0 +1,455 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright 2026 joguSD
+
+description: |
+  Azoteq IQS9150/IQS9151 capacitive trackpad controller.
+
+  Most settings have sensible defaults matching the IQS9150EV02 evaluation kit
+  Hardware-specific properties (rx-tx-mapping, alp-ati-compensation,
+  ati-multipliers) should be provided from Azoteq GUI.
+
+compatible: "azoteq,iqs9150"
+
+include: i2c-device.yaml
+
+properties:
+  rdy-gpios:
+    type: phandle-array
+    required: true
+    description: GPIO connected to the IQS9150 RDY pin.
+
+  # --- Trackpad geometry (Section 7.1) ---
+
+  total-rx:
+    type: int
+    default: 26
+    description: Number of Rx electrodes. IQS9150 max 26, IQS9151 max 13.
+
+  total-tx:
+    type: int
+    default: 18
+    description: Number of Tx electrodes. Max 22. Total Rx+Tx <= 45 (IQS9150) or 25 (IQS9151).
+
+  x-resolution:
+    type: int
+    default: 2000
+    description: X-axis coordinate output resolution.
+
+  y-resolution:
+    type: int
+    default: 1213
+    description: Y-axis coordinate output resolution.
+
+  x-trim:
+    type: int
+    default: 20
+    description: X-axis edge trim in pixels.
+
+  y-trim:
+    type: int
+    default: 20
+    description: Y-axis edge trim in pixels.
+
+  invert-x:
+    type: boolean
+    description: Flip X-axis output.
+
+  invert-y:
+    type: boolean
+    description: Flip Y-axis output.
+
+  swap-xy:
+    type: boolean
+    description: Swap X and Y axes.
+
+  max-fingers:
+    type: int
+    default: 3
+    description: Maximum simultaneous touch points (1-7).
+
+  # --- Electrode mapping (Section 7.1.4) ---
+
+  rx-tx-mapping:
+    type: uint8-array
+    default: [
+      0x19, 0x0C, 0x18, 0x0B, 0x17, 0x0A, 0x16, 0x09,
+      0x15, 0x08, 0x14, 0x13, 0x0E, 0x02, 0x0F, 0x03,
+      0x10, 0x04, 0x11, 0x07, 0x05, 0x12, 0x06, 0x01,
+      0x0D, 0x00, 0x2B, 0x2A, 0x29, 0x28, 0x27, 0x26,
+      0x25, 0x24, 0x23, 0x21, 0x22, 0x20, 0x1B, 0x1C,
+      0x1A, 0x1E, 0x1D, 0x1F
+    ]
+    description: |
+      Electrode-to-channel mapping, up to 46 bytes. First total-rx entries
+      define Rx pin assignments, followed by total-tx entries for Tx pins.
+      Hardware-specific -- obtain from Azoteq GUI.
+
+  # --- ATI calibration (Section 5.7) ---
+
+  alp-ati-compensation:
+    type: uint8-array
+    default: [
+      0xC6, 0x12, 0xB9, 0x12, 0xCD, 0x12, 0xA5, 0x12,
+      0xA2, 0x12, 0xBE, 0x12, 0xA5, 0x12, 0xA6, 0x12,
+      0xBA, 0x12, 0xBD, 0x12, 0x9E, 0x12, 0xA1, 0x12,
+      0xBB, 0x12
+    ]
+    description: ALP ATI compensation values, 26 bytes. Overwritten by ATI calibration at init.
+
+  ati-multipliers:
+    type: uint8-array
+    default: [
+      0x21, 0x4B,
+      0x87, 0x5E, 0x87, 0x5E, 0x87, 0x5C, 0x87, 0x5E,
+      0x87, 0x5E, 0x87, 0x5E, 0x87, 0x5E, 0x87, 0x5E,
+      0x87, 0x5C, 0x87, 0x5C, 0x87, 0x5E, 0x87, 0x5E,
+      0x87, 0x5E
+    ]
+    description: Trackpad (2 bytes) and ALP (26 bytes) ATI multiplier/divider values.
+
+  ati-target:
+    type: int
+    default: 250
+    description: Trackpad ATI target count value.
+
+  alp-ati-target:
+    type: int
+    default: 300
+    description: ALP channel ATI target count value.
+
+  alp-base-target:
+    type: int
+    default: 50
+    description: ALP ATI base target for Full ATI mode.
+
+  tp-neg-delta-reati:
+    type: int
+    default: 50
+    description: Trackpad negative delta re-ATI threshold.
+
+  tp-pos-delta-reati:
+    type: int
+    default: 1000
+    description: Trackpad positive delta re-ATI threshold.
+
+  tp-ref-drift-limit:
+    type: int
+    default: 50
+    description: Trackpad reference drift limit.
+
+  alp-lta-drift-limit:
+    type: int
+    default: 20
+    description: ALP LTA drift limit.
+
+  # --- Sensitivity (Section 5.6) ---
+
+  touch-set-threshold:
+    type: int
+    default: 26
+    description: Touch detection set threshold multiplier (0-255).
+
+  touch-clear-threshold:
+    type: int
+    default: 20
+    description: Touch detection clear threshold multiplier (0-255).
+
+  alp-threshold:
+    type: int
+    default: 8
+    description: ALP proximity/touch detection threshold.
+
+  alp-autoprox-threshold:
+    type: int
+    default: 8
+    description: ALP auto-prox wake threshold.
+
+  alp-set-debounce:
+    type: int
+    default: 2
+    description: ALP output set debounce count.
+
+  alp-clear-debounce:
+    type: int
+    default: 2
+    description: ALP output clear debounce count.
+
+  # --- Timing (Section 6) ---
+
+  active-sample-ms:
+    type: int
+    default: 10
+    description: Sensing period in active mode (ms).
+
+  idle-touch-sample-ms:
+    type: int
+    default: 50
+    description: Sensing period in idle-touch mode (ms).
+
+  idle-sample-ms:
+    type: int
+    default: 50
+    description: Sensing period in idle mode (ms).
+
+  lp1-sample-ms:
+    type: int
+    default: 50
+    description: Sensing period in LP1 mode (ms).
+
+  lp2-sample-ms:
+    type: int
+    default: 100
+    description: Sensing period in LP2 mode (ms).
+
+  stationary-touch-timeout-s:
+    type: int
+    default: 10
+    description: Time before stationary touch transitions to idle-touch (seconds).
+
+  idle-touch-timeout-s:
+    type: int
+    default: 60
+    description: Time in idle-touch before transitioning to idle (seconds).
+
+  idle-timeout-s:
+    type: int
+    default: 5
+    description: Time in idle before transitioning to LP1 (seconds).
+
+  lp1-timeout-s:
+    type: int
+    default: 40
+    description: Time in LP1 before transitioning to LP2 (seconds).
+
+  active-timeout-ms:
+    type: int
+    default: 1500
+    description: Time after touch release before leaving active mode (ms).
+
+  reati-retry-time-s:
+    type: int
+    default: 5
+    description: Delay before retrying after ATI error (seconds).
+
+  ref-update-time-s:
+    type: int
+    default: 8
+    description: Interval for trackpad reference updates in LP modes (seconds).
+
+  i2c-timeout-ms:
+    type: int
+    default: 100
+    description: I2C communication window timeout (ms).
+
+  # --- ALP filter betas (Section 5.4.2) ---
+
+  alp-count-beta-lp1:
+    type: int
+    default: 70
+    description: ALP count filter beta for LP1 mode.
+
+  alp-lta-beta-lp1:
+    type: int
+    default: 4
+    description: ALP LTA filter beta for LP1 mode.
+
+  alp-count-beta-lp2:
+    type: int
+    default: 180
+    description: ALP count filter beta for LP2 mode.
+
+  alp-lta-beta-lp2:
+    type: int
+    default: 100
+    description: ALP LTA filter beta for LP2 mode.
+
+  # --- Trackpad filters (Section 7.8) ---
+
+  dynamic-filter-bottom-speed:
+    type: int
+    default: 6
+    description: XY dynamic IIR filter bottom speed (pixels/cycle).
+
+  dynamic-filter-top-speed:
+    type: int
+    default: 124
+    description: XY dynamic IIR filter top speed (pixels/cycle).
+
+  dynamic-filter-bottom-beta:
+    type: int
+    default: 7
+    description: XY dynamic IIR filter bottom beta.
+
+  static-filter-beta:
+    type: int
+    default: 128
+    description: XY static IIR filter beta.
+
+  stationary-touch-threshold:
+    type: int
+    default: 20
+    description: Movement threshold for stationary touch detection (pixels).
+
+  finger-split-factor:
+    type: int
+    default: 3
+    description: Aggressiveness of multi-touch finger splitting.
+
+  jitter-filter-delta:
+    type: int
+    default: 3
+    description: Minimum initial movement before jitter filter allows updates.
+
+  finger-confidence-threshold:
+    type: int
+    default: 20
+    description: Touch area above which finger confidence bit clears.
+
+  # --- Gestures (Section 8) ---
+
+  tap-enable:
+    type: boolean
+    description: Enable single-finger tap-to-click.
+
+  double-tap-enable:
+    type: boolean
+    description: Enable double-tap gesture.
+
+  triple-tap-enable:
+    type: boolean
+    description: Enable triple-tap gesture.
+
+  press-hold-enable:
+    type: boolean
+    description: Enable press-and-hold gesture.
+
+  two-finger-tap-enable:
+    type: boolean
+    description: Enable two-finger tap gesture.
+
+  scroll-enable:
+    type: boolean
+    description: Enable two-finger scroll gesture.
+
+  swipe-enable:
+    type: boolean
+    description: Enable swipe gestures (1F and 2F).
+
+  zoom-enable:
+    type: boolean
+    description: Enable two-finger zoom (pinch) gesture.
+
+  palm-reject-enable:
+    type: boolean
+    description: Enable palm rejection.
+
+  tap-time-ms:
+    type: int
+    default: 150
+    description: Maximum touch duration for a valid tap (ms).
+
+  tap-air-time-ms:
+    type: int
+    default: 150
+    description: Maximum time between taps for double/triple tap (ms).
+
+  tap-distance:
+    type: int
+    default: 50
+    description: Maximum finger movement for a valid tap (pixels).
+
+  hold-time-ms:
+    type: int
+    default: 300
+    description: Duration before press-and-hold triggers (ms).
+
+  swipe-time-ms:
+    type: int
+    default: 150
+    description: Maximum time to complete initial swipe distance (ms).
+
+  swipe-x-distance:
+    type: int
+    default: 300
+    description: Minimum X distance for initial swipe (pixels).
+
+  swipe-y-distance:
+    type: int
+    default: 150
+    description: Minimum Y distance for initial swipe (pixels).
+
+  swipe-x-consecutive-distance:
+    type: int
+    default: 100
+    description: X distance between consecutive swipe events (pixels).
+
+  swipe-y-consecutive-distance:
+    type: int
+    default: 50
+    description: Y distance between consecutive swipe events (pixels).
+
+  swipe-angle:
+    type: int
+    default: 37
+    description: Maximum swipe angle from axis, encoded as 64*tan(degrees).
+
+  scroll-angle:
+    type: int
+    default: 37
+    description: Maximum scroll angle from axis, encoded as 64*tan(degrees).
+
+  scroll-initial-distance:
+    type: int
+    default: 50
+    description: Minimum two-finger movement to trigger scroll (pixels).
+
+  scroll-consecutive-distance:
+    type: int
+    default: 5
+    description: Two-finger movement between consecutive scroll events (pixels).
+
+  zoom-initial-distance:
+    type: int
+    default: 100
+    description: Minimum two-finger distance change to trigger zoom (pixels).
+
+  zoom-consecutive-distance:
+    type: int
+    default: 10
+    description: Distance between consecutive zoom events (pixels).
+
+  palm-gesture-threshold:
+    type: int
+    default: 100
+    description: Simultaneous touch channels to trigger palm gesture.
+
+  # --- System registers (Section 12, Appendix A.12-A.14) ---
+
+  config-settings:
+    type: uint8-array
+    default: [0x1E, 0x46]
+    description: Config settings register, 2 bytes.
+
+  other-settings:
+    type: uint8-array
+    default: [0xA8, 0x80]
+    description: Other settings register, 2 bytes.
+
+  # --- ALP channel (Section 5.3) ---
+
+  alp-setup:
+    type: uint8-array
+    default: [0xFF, 0xFF, 0xFF, 0xD3]
+    description: ALP channel configuration, 4 bytes.
+
+  alp-tx-enable:
+    type: uint8-array
+    default: [0x00, 0x00, 0x00, 0xFC, 0xFF, 0x0F]
+    description: ALP Tx electrode enable mask, 6 bytes.
+
+  # --- Hardware (Section 10) ---
+
+  hardware-settings:
+    type: uint8-array
+    default: [0x28, 0x02, 0x02, 0x10, 0x07, 0x07, 0x00, 0x44, 0x40, 0x4B]
+    description: Conversion frequency and hardware settings, 10 bytes.
