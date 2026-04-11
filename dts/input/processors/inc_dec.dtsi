@@ -1,0 +1,49 @@
+/*
+  SPDX-License-Identifier: GPL-3.0-or-later
+  Copyright 2026 joguSD
+*/
+
+#include <zephyr/dt-bindings/input/input-event-codes.h>
+#include <dt-bindings/zmk/rgb.h>
+
+/ {
+    /omit-if-no-ref/ zip_hscroll_scaler: zip_hscroll_scaler {
+        compatible = "zmk,input-processor-scaler";
+        #input-processor-cells = <2>;
+        type = <INPUT_EV_REL>;
+        codes = <INPUT_REL_HWHEEL>;
+        track-remainders;
+    };
+
+    /omit-if-no-ref/ zip_vscroll_scaler: zip_vscroll_scaler {
+        compatible = "zmk,input-processor-scaler";
+        #input-processor-cells = <2>;
+        type = <INPUT_EV_REL>;
+        codes = <INPUT_REL_WHEEL>;
+        track-remainders;
+    };
+
+    /omit-if-no-ref/ zip_hscroll_rgb_hue: zip_hscroll_rgb_hue {
+        compatible = "zmk,input-processor-inc-dec";
+        #input-processor-cells = <0>;
+        type = <INPUT_EV_REL>;
+        codes = <INPUT_REL_HWHEEL>;
+        bindings = <&rgb_ug RGB_HUI>, <&rgb_ug RGB_HUD>;
+    };
+
+    /omit-if-no-ref/ zip_vscroll_rgb_sat: zip_vscroll_rgb_sat {
+        compatible = "zmk,input-processor-inc-dec";
+        #input-processor-cells = <0>;
+        type = <INPUT_EV_REL>;
+        codes = <INPUT_REL_WHEEL>;
+        bindings = <&rgb_ug RGB_SAI>, <&rgb_ug RGB_SAD>;
+    };
+
+    /omit-if-no-ref/ zip_y_rgb_brt: zip_y_rgb_brt {
+        compatible = "zmk,input-processor-inc-dec";
+        #input-processor-cells = <0>;
+        type = <INPUT_EV_REL>;
+        codes = <INPUT_REL_Y>;
+        bindings = <&rgb_ug RGB_BRD>, <&rgb_ug RGB_BRI>;
+    };
+};

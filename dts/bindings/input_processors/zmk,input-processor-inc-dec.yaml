@@ -1,0 +1,21 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright 2026 joguSD
+
+description: Map positive/negative input deltas to behavior pairs
+
+compatible: "zmk,input-processor-inc-dec"
+
+include: ip_zero_param.yaml
+
+properties:
+  type:
+    type: int
+  codes:
+    type: array
+    required: true
+  bindings:
+    type: phandle-array
+    required: true
+  tap-ms:
+    type: int
+    default: 5

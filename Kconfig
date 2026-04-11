@@ -28,3 +28,8 @@ config IQS9150
     default y
     depends on DT_HAS_AZOTEQ_IQS9150_ENABLED
     select I2C
+
+config ZMK_INPUT_PROCESSOR_INC_DEC
+    bool "Inc/Dec input processor"
+    default y
+    depends on DT_HAS_ZMK_INPUT_PROCESSOR_INC_DEC_ENABLED

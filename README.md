@@ -31,13 +31,11 @@ implemented but untested as I do not have any laptop hardware at the moment.
 * Settings saving & loading
 * Physical keyboard layout definition
 * ZMK Studio Support
+* MNT Reform Next Trackpad
 
 ![ZMK Studio Screenshot](https://github.com/user-attachments/assets/8b30a9c6-927b-4d7e-b47d-196373f5c54a)
 
 ## Planned
-* MNT Reform Next Trackpad support
-
-## No plan yet
 * MNT Reform Pocket support
 
 # Testing
