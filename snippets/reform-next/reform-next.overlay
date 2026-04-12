@@ -52,8 +52,10 @@
         tap-enable;
         two-finger-tap-enable;
         scroll-enable;
+        scroll-initial-distance = <1>;
+        scroll-consecutive-distance = <1>;
         palm-reject-enable;
-        tap-time-ms = <50>;
+        tap-time-ms = <80>;
     };
 };
 
@@ -61,7 +63,6 @@
     trackpad_listener {
         compatible = "zmk,input-listener";
         device = <&trackpad>;
-        input-processors = <&zip_scroll_scaler 1 10>;
 
         rgb_mode {
             layers = <1>;
