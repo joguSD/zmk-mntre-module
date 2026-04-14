@@ -32,10 +32,12 @@ implemented but untested as I do not have any laptop hardware at the moment.
 * Physical keyboard layout definition
 * ZMK Studio Support
 * MNT Reform Next Trackpad
+    * Mouse emulation, simple gestures (on-engine)
 
 ![ZMK Studio Screenshot](https://github.com/user-attachments/assets/8b30a9c6-927b-4d7e-b47d-196373f5c54a)
 
 ## Planned
+* Precision Trackpad HID support for advanced multitouch gestures
 * MNT Reform Pocket support
 
 # Testing
