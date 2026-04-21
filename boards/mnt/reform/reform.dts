@@ -137,6 +137,36 @@
     startup-delay-multiplier = <64>;
 };
 
+&pll_sys {
+    fb-div = <125>;
+    post-div1 = <6>;
+    post-div2 = <4>;
+};
+
+&clk_sys {
+    clock-frequency = <62500000>;
+};
+
+&clk_peri {
+    clock-frequency = <62500000>;
+};
+
+&clk_gpout0 {
+    clock-frequency = <62500000>;
+};
+
+&clk_gpout1 {
+    clock-frequency = <62500000>;
+};
+
+&clk_gpout2 {
+    clock-frequency = <62500000>;
+};
+
+&clk_gpout3 {
+    clock-frequency = <62500000>;
+};
+
 &gpio0 {
     status = "okay";
 };
