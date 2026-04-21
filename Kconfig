@@ -33,3 +33,9 @@ config ZMK_INPUT_PROCESSOR_INC_DEC
     bool "Inc/Dec input processor"
     default y
     depends on DT_HAS_ZMK_INPUT_PROCESSOR_INC_DEC_ENABLED
+
+config RP2040_SLEEP
+    bool "RP2040 sleep mode driver"
+    default y
+    depends on DT_HAS_RASPBERRYPI_RP2040_SLEEP_ENABLED
+    depends on SOC_RP2040

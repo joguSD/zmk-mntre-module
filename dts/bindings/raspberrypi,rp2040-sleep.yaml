@@ -1,0 +1,27 @@
+# Copyright (c) 2025 The ZMK Contributors
+# SPDX-License-Identifier: MIT
+description: |
+  Driver for configuring RP2040 sleep modes
+
+compatible: "raspberrypi,rp2040-sleep"
+
+properties:
+  sleep-en0:
+    type: int
+    default: 0xffffffff
+    description: "Bitmask of the EN0 clocks to enable during sleep mode"
+  sleep-en1:
+    type: int
+    default: 0x7fff
+    description: "Bitmask of the EN1 clocks to enable during sleep mode"
+  wake-en0:
+    type: int
+    default: 0xffffffff
+    description: "Bitmask of the EN0 clocks to enable during wake mode"
+  wake-en1:
+    type: int
+    default: 0x7fff
+    description: "Bitmask of the EN1 clocks to enable during wake mode"
+  deep-sleep:
+    type: boolean
+    description: "Enable deep sleep mode"
