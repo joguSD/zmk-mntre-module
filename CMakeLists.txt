@@ -50,3 +50,4 @@ endif() # ((NOT CONFIG_ZMK_SPLIT) OR CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
 
 target_sources_ifdef(CONFIG_IQS9150 app PRIVATE src/drivers/input/input_iqs9150.c)
 target_sources_ifdef(CONFIG_ZMK_INPUT_PROCESSOR_INC_DEC app PRIVATE src/input_processors/input_processor_inc_dec.c)
+target_sources_ifdef(CONFIG_RP2040_SLEEP app PRIVATE src/drivers/rp2040_sleep.c)

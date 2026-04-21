@@ -37,6 +37,15 @@
         watchdog0 = &wdt0;
     };
 
+    sleep_config: rp2040_sleep {
+        compatible = "raspberrypi,rp2040-sleep";
+        sleep-en0 = <0xf0941959>;
+        sleep-en1 = <0x6c23>;
+        wake-en0 = <0xf0fddf79>;
+        wake-en1 = <0x7f27>;
+        deep-sleep;
+    };
+
     default_transform: keymap_transform_0 {
         compatible = "zmk,matrix-transform";
         columns = <14>;
