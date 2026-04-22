@@ -43,6 +43,8 @@
         ];
         touch-set-threshold = <44>;
         touch-clear-threshold = <38>;
+        ati-target = <300>;
+        alp-tx-enable = [00 00 00 00 ff 0f];
         jitter-filter-delta = <5>;
         lp2-sample-ms = <50>;
         config-settings = [07 06];
@@ -55,6 +57,7 @@
         scroll-initial-distance = <1>;
         scroll-consecutive-distance = <1>;
         palm-reject-enable;
+        area-filter-disable;
         tap-time-ms = <80>;
     };
 };

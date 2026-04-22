@@ -62,6 +62,10 @@ properties:
     type: boolean
     description: Swap X and Y axes.
 
+  area-filter-disable:
+    type: boolean
+    description: Disable area-based position filtering. Recommended for PTP mode.
+
   max-fingers:
     type: int
     default: 3

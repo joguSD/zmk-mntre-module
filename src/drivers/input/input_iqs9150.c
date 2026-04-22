@@ -62,7 +62,9 @@ LOG_MODULE_REGISTER(iqs9150, CONFIG_INPUT_LOG_LEVEL);
 #define IQS9150_TP_FLIP_Y BIT(1)
 #define IQS9150_TP_SWAP_XY BIT(2)
 #define IQS9150_TP_IIR_FILTER BIT(3)
+#define IQS9150_TP_IIR_STATIC BIT(4)
 #define IQS9150_TP_JITTER BIT(5)
+#define IQS9150_TP_AREA_FILTER_DISABLE BIT(6)
 
 /* Gesture enable bits */
 #define IQS9150_GE_SINGLE_TAP BIT(0)
@@ -97,6 +99,7 @@ struct iqs9150_config {
   bool invert_x;
   bool invert_y;
   bool swap_xy;
+  bool area_filter_disable;
   uint8_t max_fingers;
 
   /* Electrode mapping */
@@ -346,6 +349,8 @@ static int iqs9150_write_config(const struct device *dev) {
     tp_settings_0 |= IQS9150_TP_FLIP_Y;
   if (cfg->swap_xy)
     tp_settings_0 |= IQS9150_TP_SWAP_XY;
+  if (cfg->area_filter_disable)
+    tp_settings_0 |= IQS9150_TP_AREA_FILTER_DISABLE;
 
   uint8_t tp[] = {
       tp_settings_0,
@@ -713,6 +718,7 @@ static int iqs9150_init(const struct device *dev) {
       .invert_x = DT_INST_PROP(n, invert_x),                                   \
       .invert_y = DT_INST_PROP(n, invert_y),                                   \
       .swap_xy = DT_INST_PROP(n, swap_xy),                                     \
+      .area_filter_disable = DT_INST_PROP(n, area_filter_disable),             \
       .max_fingers = DT_INST_PROP(n, max_fingers),                             \
       .rx_tx_mapping = DT_INST_PROP(n, rx_tx_mapping),                         \
       .rx_tx_mapping_len = DT_INST_PROP_LEN(n, rx_tx_mapping),                 \
