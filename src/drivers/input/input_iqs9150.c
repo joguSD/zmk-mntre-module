@@ -289,7 +289,7 @@ static int iqs9150_write_config(const struct device *dev) {
       cfg->ref_update_time_s,
       cfg->i2c_timeout_ms & 0xFF,
       cfg->i2c_timeout_ms >> 8,
-      20, /* snap_timeout_s -- not yet supported, using eval kit default */
+      20, // snap_timeout_s
       0x00,
   };
   ret = iqs9150_write(&cfg->i2c, 0x11A2, timing, sizeof(timing));
@@ -315,10 +315,14 @@ static int iqs9150_write_config(const struct device *dev) {
 
   /* 0x11CC: Thresholds and Debounce (8 bytes) */
   uint8_t thresh[] = {
-      cfg->touch_set_threshold, cfg->touch_clear_threshold,
-      cfg->alp_threshold,       cfg->alp_autoprox_threshold,
-      cfg->alp_set_debounce,    cfg->alp_clear_debounce,
-      50, 50, /* snap set/clear thresholds -- not yet supported, using eval kit defaults */
+      cfg->touch_set_threshold,
+      cfg->touch_clear_threshold,
+      cfg->alp_threshold,
+      cfg->alp_autoprox_threshold,
+      cfg->alp_set_debounce,
+      cfg->alp_clear_debounce,
+      50, // snap set threshold
+      50, // snap clear threshold
   };
   ret = iqs9150_write(&cfg->i2c, 0x11CC, thresh, sizeof(thresh));
   if (ret < 0)
@@ -551,7 +555,6 @@ static void iqs9150_work_handler(struct k_work *work) {
     uint8_t gestures_1f_hi = buf[IQS9150_OFF_1F_GESTURE + 1];
     uint8_t gestures_2f = buf[IQS9150_OFF_2F_GESTURE];
     uint8_t gestures_2f_hi = buf[IQS9150_OFF_2F_GESTURE + 1];
-
 
     bool scrolling = gestures_2f & (IQS9150_2F_VERTICAL_SCROLL |
                                     IQS9150_2F_HORIZONTAL_SCROLL);
