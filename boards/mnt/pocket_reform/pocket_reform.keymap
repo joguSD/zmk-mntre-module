@@ -13,6 +13,7 @@
 #define BASE  0
 #define HYPER 1
 #define SCROL 2
+#define COLOR 3
 
 #define RGBTOG  &rgb_ug RGB_TOG
 #define RGBHUI  &rgb_ug RGB_HUI
@@ -108,6 +109,28 @@
                 &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans
                                               &trans    &trans                        &trans    &trans
             >;
+        };
+
+        color {
+            // Layer 3 COLOR
+            display-name = "Color";
+            bindings = <
+                RGBTOG    RGBBRD    RGBBRI    RGBHUD    RGBHUI    RGBSAD    RGBSAI    RGBEFF    &trans    &trans    &trans    &trans
+                &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans
+                &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans
+                &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans
+                &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans
+                                              &trans    &trans                        &trans    &trans
+            >;
+        };
+    };
+
+    conditional_layers {
+        compatible = "zmk,conditional-layers";
+
+        hyper_scroll {
+            if-layers = <HYPER SCROL>;
+            then-layer = <COLOR>;
         };
     };
 };

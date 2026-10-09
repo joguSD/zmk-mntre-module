@@ -53,19 +53,27 @@
         input-processors = <&zip_xy_scaler 2 1>;
 
         rgb_mode {
-            layers = <1>;
+            layers = <3>;
             input-processors
                 = <&zip_x_scaler 1 5>, <&zip_x_rgb_hue>
                 , <&zip_y_scaler 1 20>, <&zip_y_rgb_sat>
                 ;
         };
 
+        brt_mode {
+            layers = <1>;
+            input-processors
+                = <&zip_y_scaler 1 20>, <&zip_y_rgb_brt>
+                , <&zip_x_scaler 0 1>
+                ;
+        };
+
         scroll_mode {
             layers = <2>;
             input-processors
-                = <&zip_xy_scaler 2 1>
-                , <&zip_xy_transform INPUT_TRANSFORM_Y_INVERT>
+                = <&zip_xy_transform INPUT_TRANSFORM_Y_INVERT>
                 , <&zip_xy_to_scroll_mapper>
+                , <&zip_scroll_scaler 1 10>
                 ;
         };
     };
