@@ -39,6 +39,22 @@
         bindings = <&rgb_ug RGB_SAI>, <&rgb_ug RGB_SAD>;
     };
 
+    /omit-if-no-ref/ zip_x_rgb_hue: zip_x_rgb_hue {
+        compatible = "zmk,input-processor-inc-dec";
+        #input-processor-cells = <0>;
+        type = <INPUT_EV_REL>;
+        codes = <INPUT_REL_X>;
+        bindings = <&rgb_ug RGB_HUI>, <&rgb_ug RGB_HUD>;
+    };
+
+    /omit-if-no-ref/ zip_y_rgb_sat: zip_y_rgb_sat {
+        compatible = "zmk,input-processor-inc-dec";
+        #input-processor-cells = <0>;
+        type = <INPUT_EV_REL>;
+        codes = <INPUT_REL_Y>;
+        bindings = <&rgb_ug RGB_SAD>, <&rgb_ug RGB_SAI>;
+    };
+
     /omit-if-no-ref/ zip_y_rgb_brt: zip_y_rgb_brt {
         compatible = "zmk,input-processor-inc-dec";
         #input-processor-cells = <0>;
