@@ -12,6 +12,7 @@
 
 #define BASE  0
 #define HYPER 1
+#define SCROL 2
 
 #define RGBTOG  &rgb_ug RGB_TOG
 #define RGBHUI  &rgb_ug RGB_HUI
@@ -66,7 +67,7 @@
                 &kp LCTRL &kp A     &kp S     &kp D     &kp F     &kp G     &kp H     &kp J     &kp K     &kp L     &kp SQT   &kp ENTER
                 &kp LSHFT &kp Z     &kp X     &kp C     &kp V     &kp B     &kp N     &kp M     &kp COMMA &kp DOT   &kp UP    &kp RALT
                 &mo HYPER &kp LGUI  &kp LALT  &kp BSLH  &kp EQUAL &kp SPACE &kp SPACE &kp MINUS &kp FSLH  &kp LEFT  &kp DOWN  &kp RIGHT
-                                              &mkp MCLK &mkp LCLK                     &none     &mkp RCLK
+                                              &mkp MCLK &mkp LCLK                     &mo SCROL &mkp RCLK
             >;
         };
 
@@ -92,6 +93,19 @@
                 &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &reform_menu
                 &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &kp PG_UP &kp RSHFT
                 &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &kp HOME  &kp PG_DN &kp END
+                                              &trans    &trans                        &trans    &trans
+            >;
+        };
+
+        scroll {
+            // Layer 2 SCROLL
+            display-name = "Scroll";
+            bindings = <
+                &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans
+                &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans
+                &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans
+                &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans
+                &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans
                                               &trans    &trans                        &trans    &trans
             >;
         };
