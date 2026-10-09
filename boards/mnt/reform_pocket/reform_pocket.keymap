@@ -16,7 +16,7 @@
 
 #define BASE  0
 #define HYPER 1
-#define SCROL 2
+#define SCRL  2
 #define COLOR 3
 
 #define RGBTOG  &rgb_ug RGB_TOG
@@ -72,7 +72,7 @@
                 &kp LCTRL &kp A     &kp S     &kp D     &kp F     &kp G     &kp H     &kp J     &kp K     &kp L     &kp SQT   &kp ENTER
                 &kp LSHFT &kp Z     &kp X     &kp C     &kp V     &kp B     &kp N     &kp M     &kp COMMA &kp DOT   &kp UP    &kp RALT
                 &mo HYPER &kp LGUI  &kp LALT  &kp BSLH  &kp EQUAL &kp SPACE &kp SPACE &kp MINUS &kp FSLH  &kp LEFT  &kp DOWN  &kp RIGHT
-                                              &mkp MCLK &mkp LCLK                     &mo SCROL &mkp RCLK
+                                              &mkp MCLK &mkp LCLK                     &mo SCRL  &mkp RCLK
             >;
         };
 
@@ -111,7 +111,7 @@
                 &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans
                 &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans
                 &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans    &trans
-                                              &trans    &trans                        &trans    &trans
+                                              &tog SCRL &trans                        &tog SCRL &trans
             >;
         };
 
@@ -133,7 +133,7 @@
         compatible = "zmk,conditional-layers";
 
         hyper_scroll {
-            if-layers = <HYPER SCROL>;
+            if-layers = <HYPER SCRL>;
             then-layer = <COLOR>;
         };
     };
