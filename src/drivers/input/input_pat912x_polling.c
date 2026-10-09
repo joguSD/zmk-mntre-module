@@ -3,8 +3,8 @@
  * Copyright 2026 joguSD
  *
  * Trackball polling driver for Pocket Reform.
- * The Pocket Reform lacks a motion interrupt pin, so we poll at 5ms (200Hz)
- * matching the original firmware.
+ * The Pocket Reform lacks a motion interrupt pin, so we poll at 5ms (200Hz).
+ * The original firmware polls from its main loop at ~10ms.
  */
 
 #include <zephyr/device.h>
@@ -17,16 +17,13 @@
 LOG_MODULE_REGISTER(trackball, CONFIG_INPUT_LOG_LEVEL);
 
 #define PAT912X_MOTION_STATUS  0x02
-#define PAT912X_DELTA_X_LO    0x03
-#define PAT912X_DELTA_XY_HI   0x12
-#define PAT912X_RES_X         0x0d
-#define PAT912X_RES_Y         0x0e
-#define PAT912X_WRITE_PROTECT 0x09
-#define PAT912X_CONFIGURATION 0x06
+#define PAT912X_DELTA_X_LO     0x03
+#define PAT912X_OPERATION_MODE 0x05
+#define PAT912X_DELTA_XY_HI    0x12
+#define PAT912X_BANK_SELECT    0x7f
 #define MOTION_STATUS_MOTION   BIT(7)
-#define WRITE_PROTECT_DISABLE  0x5a
-#define CONFIGURATION_RESET    0x97
-#define CONFIGURATION_CLEAR    0x17
+#define BANK_SELECT_0          0x00
+#define OPERATION_MODE_INIT    0x01
 
 #define POLL_INTERVAL_MS 5
 
@@ -43,8 +40,6 @@ struct trackball_config {
     struct i2c_dt_spec i2c;
     bool invert_x;
     bool invert_y;
-    uint8_t res_x;
-    uint8_t res_y;
 };
 
 static void trackball_poll(struct k_work *work)
@@ -108,23 +103,15 @@ static int trackball_init(const struct device *dev)
         return -ENODEV;
     }
 
-    /* Reset */
-    ret = i2c_reg_write_byte_dt(&cfg->i2c, PAT912X_CONFIGURATION, CONFIGURATION_RESET);
+    ret = i2c_reg_write_byte_dt(&cfg->i2c, PAT912X_BANK_SELECT, BANK_SELECT_0);
     if (ret < 0) {
-        return ret;
-    }
-    k_msleep(2);
-    ret = i2c_reg_write_byte_dt(&cfg->i2c, PAT912X_CONFIGURATION, CONFIGURATION_CLEAR);
-    if (ret < 0) {
+        LOG_ERR("Sensor not responding at 0x%02x: %d", cfg->i2c.addr, ret);
         return ret;
     }
 
-    /* Set CPI resolution */
-    ret = i2c_reg_write_byte_dt(&cfg->i2c, PAT912X_WRITE_PROTECT, WRITE_PROTECT_DISABLE);
-    ret |= i2c_reg_write_byte_dt(&cfg->i2c, PAT912X_RES_X, cfg->res_x);
-    ret |= i2c_reg_write_byte_dt(&cfg->i2c, PAT912X_RES_Y, cfg->res_y);
-    ret |= i2c_reg_write_byte_dt(&cfg->i2c, PAT912X_WRITE_PROTECT, 0x00);
+    ret = i2c_reg_write_byte_dt(&cfg->i2c, PAT912X_OPERATION_MODE, OPERATION_MODE_INIT);
     if (ret < 0) {
+        LOG_ERR("Failed to set operation mode: %d", ret);
         return ret;
     }
 
@@ -141,8 +128,6 @@ static const struct trackball_config trackball_config_0 = {
     .i2c = I2C_DT_SPEC_GET(TRACKBALL_NODE),
     .invert_x = DT_PROP(TRACKBALL_NODE, invert_x),
     .invert_y = DT_PROP(TRACKBALL_NODE, invert_y),
-    .res_x = DT_PROP(TRACKBALL_NODE, res_x_cpi) / 5,
-    .res_y = DT_PROP(TRACKBALL_NODE, res_y_cpi) / 5,
 };
 DEVICE_DT_DEFINE(TRACKBALL_NODE, trackball_init, NULL, &trackball_data_0,
                  &trackball_config_0, POST_KERNEL, CONFIG_INPUT_INIT_PRIORITY, NULL);

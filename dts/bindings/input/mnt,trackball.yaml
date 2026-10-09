@@ -14,11 +14,3 @@ properties:
   invert-y:
     type: boolean
     description: Invert Y axis
-  res-x-cpi:
-    type: int
-    default: 100
-    description: X axis resolution in CPI (5-1275)
-  res-y-cpi:
-    type: int
-    default: 100
-    description: Y axis resolution in CPI (5-1275)
