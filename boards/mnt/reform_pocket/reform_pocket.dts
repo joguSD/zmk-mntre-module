@@ -12,10 +12,10 @@
 #include <input/processors.dtsi>
 #include <input/processors/inc_dec.dtsi>
 
-#include "pocket_reform-pinctrl.dtsi"
-#include "pocket_reform-layouts.dtsi"
+#include "reform_pocket-pinctrl.dtsi"
+#include "reform_pocket-layouts.dtsi"
 
-&pocket_reform_layout {
+&reform_pocket_layout {
     transform = <&default_transform>;
 };
 
@@ -33,7 +33,7 @@
         mnt,reform-sysctrl = &uart1;
 
         zmk,kscan = &kscan0;
-        zmk,physical-layout = &pocket_reform_layout;
+        zmk,physical-layout = &reform_pocket_layout;
         zmk,underglow = &led_strip;
     };
 

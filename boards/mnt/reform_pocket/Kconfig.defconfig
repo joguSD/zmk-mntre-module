@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright 2026 joguSD
 
-if BOARD_POCKET_REFORM
+if BOARD_REFORM_POCKET
 
 config ZMK_KEYBOARD_NAME
     default "MNT Pocket KB"
@@ -22,4 +22,4 @@ config USB_MAX_POWER
 config USB_DEVICE_REMOTE_WAKEUP
     default y
 
-endif # BOARD_POCKET_REFORM
+endif # BOARD_REFORM_POCKET

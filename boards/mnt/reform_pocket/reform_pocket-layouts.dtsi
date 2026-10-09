@@ -1,7 +1,7 @@
 #include <physical_layouts.dtsi>
 
 / {
-    pocket_reform_layout: pocket_reform_layout {
+    reform_pocket_layout: reform_pocket_layout {
         compatible = "zmk,physical-layout";
         display-name = "MNT Pocket Reform Layout";
 

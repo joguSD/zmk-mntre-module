@@ -2,9 +2,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  * Copyright 2026 joguSD
  *
- * Trackball polling driver for Pocket Reform.
- * The Pocket Reform lacks a motion interrupt pin, so we poll at 5ms (200Hz).
- * The original firmware polls from its main loop at ~10ms.
+ * Polling based driver for the MNT Reform Pocket trackball
  */
 
 #include <zephyr/device.h>
