@@ -3,6 +3,7 @@
   Copyright 2026 joguSD
 */
 #include <behaviors.dtsi>
+#include <behaviors/safe_bootloader.dtsi>
 #include <dt-bindings/zmk/behaviors.h>
 #include <dt-bindings/zmk/keys.h>
 #include <dt-bindings/zmk/reform_sysctrl.h>
@@ -96,7 +97,7 @@
       item14 {
         text = "USB Flashing Mode   x";
         key = <X>;
-        bindings = <&bootloader>;
+        bindings = <&safe_bootloader>;
         close-on-select;
       };
     };

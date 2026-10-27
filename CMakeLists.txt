@@ -43,6 +43,7 @@ target_sources_ifdef(CONFIG_MNT_TRACKBALL app PRIVATE src/drivers/input/input_pa
 if ((NOT CONFIG_ZMK_SPLIT) OR CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
     target_sources(app PRIVATE src/behaviors/behavior_menu.c)
     target_sources(app PRIVATE src/behaviors/behavior_reform_sysctrl.c)
+    target_sources(app PRIVATE src/behaviors/behavior_usb_guard.c)
     target_sources(app PRIVATE src/reform/font.c)
     target_sources(app PRIVATE src/reform/matrix.c)
     target_sources(app PRIVATE src/reform/display.c)

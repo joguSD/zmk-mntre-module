@@ -1,0 +1,17 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright 2026 joguSD
+description: |
+  Invokes the bound behavior only while a USB host is connected, otherwise
+  displays the configured message.
+
+compatible: "zmk,behavior-usb-guard"
+
+include: zero_param.yaml
+
+properties:
+  bindings:
+    type: phandle-array
+    required: true
+  message:
+    type: string
+    description: Text to display when no USB host is connected

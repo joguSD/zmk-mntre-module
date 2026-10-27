@@ -1,0 +1,17 @@
+/*
+  SPDX-License-Identifier: GPL-3.0-or-later
+  Copyright 2026 joguSD
+*/
+#include <behaviors.dtsi>
+
+/ {
+    behaviors {
+        safe_bootloader: safeboot {
+            compatible = "zmk,behavior-usb-guard";
+            #binding-cells = <0>;
+            bindings = <&bootloader>;
+            message = "No USB host found\nPower on and retry";
+            display-name = "Bootloader Safe";
+        };
+    };
+};
