@@ -14,6 +14,7 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 #include <dt-bindings/zmk/hid_usage.h>
 #include <zmk/behavior.h>
 #include <zmk/event_manager.h>
+#include <zmk/events/activity_state_changed.h>
 #include <zmk/events/keycode_state_changed.h>
 #include <zmk/events/position_state_changed.h>
 #include <zmk/keymap.h>
@@ -61,6 +62,19 @@ static void menu_schedule_render() {
 // Initialization Function (Optional)
 static int menu_init(const struct device *dev) { return 0; };
 
+static void menu_close(void) {
+  if (!active_menu_dev) {
+    return;
+  }
+
+  LOG_INF("Deactivating Menu: %s", active_menu_dev->name);
+  struct behavior_menu_data *data = active_menu_dev->data;
+  active_menu_dev = NULL;
+  data->item_index = 0;
+  data->highlight_index = 0;
+  display_request_render(NULL);
+}
+
 static int on_menu_binding_pressed(struct zmk_behavior_binding *binding,
                                    struct zmk_behavior_binding_event event) {
   LOG_DBG("Pressing menu binding");
@@ -69,13 +83,8 @@ static int on_menu_binding_pressed(struct zmk_behavior_binding *binding,
 
   // Closes the active menu upon duplicate menu binding press
   if (active_menu_dev == dev) {
-    LOG_INF("Deactivating Menu: %s", dev->name);
     // TODO force release events for held down menu items?
-    struct behavior_menu_data *data = active_menu_dev->data;
-    active_menu_dev = NULL;
-    data->item_index = 0;
-    data->highlight_index = 0;
-    display_request_render(NULL);
+    menu_close();
     return ZMK_BEHAVIOR_OPAQUE;
   }
 
@@ -108,6 +117,7 @@ static const struct behavior_driver_api menu_driver_api = {
       .text = DT_PROP(child, text),                                            \
       .key = ZMK_HID_USAGE_ID(DT_PROP(child, key)),                            \
       .behavior = ZMK_KEYMAP_EXTRACT_BINDING(0, child),                        \
+      .close_on_select = DT_PROP(child, close_on_select),                      \
       .virtual_key_position = ZMK_VIRTUAL_KEY_POSITION_MENU(__COUNTER__),      \
   }
 
@@ -137,9 +147,16 @@ static const struct behavior_driver_api menu_driver_api = {
 DT_INST_FOREACH_STATUS_OKAY(MENU_INST)
 
 static int menu_keycode_state_changed_listener(const zmk_event_t *eh);
+static int menu_activity_state_changed_listener(const zmk_event_t *eh);
 
 ZMK_LISTENER(behavior_menu_listener, menu_keycode_state_changed_listener);
 ZMK_SUBSCRIPTION(behavior_menu_listener, zmk_keycode_state_changed);
+ZMK_LISTENER(behavior_menu_idle_listener, menu_activity_state_changed_listener);
+ZMK_SUBSCRIPTION(behavior_menu_idle_listener, zmk_activity_state_changed);
+
+// Item that closed the menu on its press; its key's release still goes to it
+static const struct menu_item *pending_release_item;
+static uint32_t pending_release_keycode;
 
 void menu_cycle_up() {
   struct behavior_menu_data *data = active_menu_dev->data;
@@ -168,10 +185,34 @@ void menu_cycle_down() {
   LOG_DBG("Menu Down i %d, h %d", data->item_index, data->highlight_index);
 }
 
+static void menu_invoke(const struct menu_item *item,
+                        const struct zmk_keycode_state_changed *ev) {
+  struct zmk_behavior_binding_event event = {
+      .position = item->virtual_key_position,
+      .timestamp = ev->timestamp,
+  };
+
+  // Close before running the item, so a screen it renders replaces the logo
+  if (ev->state && item->close_on_select) {
+    menu_close();
+    pending_release_item = item;
+    pending_release_keycode = ev->keycode;
+  }
+  zmk_behavior_invoke_binding(&item->behavior, event, ev->state);
+}
+
 static int menu_keycode_state_changed_listener(const zmk_event_t *eh) {
   struct zmk_keycode_state_changed *ev = as_zmk_keycode_state_changed(eh);
   if (ev == NULL) {
     return ZMK_EV_EVENT_BUBBLE;
+  }
+
+  if (pending_release_item && !ev->state &&
+      ev->keycode == pending_release_keycode) {
+    const struct menu_item *item = pending_release_item;
+    pending_release_item = NULL;
+    menu_invoke(item, ev);
+    return ZMK_EV_EVENT_HANDLED;
   }
 
   // If menu is not active, do nothing and bubble
@@ -200,11 +241,7 @@ static int menu_keycode_state_changed_listener(const zmk_event_t *eh) {
 
     LOG_DBG("Select: %s, %d", item->text, ev->state);
 
-    struct zmk_behavior_binding_event event = {
-        .position = item->virtual_key_position,
-        .timestamp = ev->timestamp,
-    };
-    zmk_behavior_invoke_binding(&item->behavior, event, ev->state);
+    menu_invoke(item, ev);
     return ZMK_EV_EVENT_HANDLED;
   }
 
@@ -213,17 +250,22 @@ static int menu_keycode_state_changed_listener(const zmk_event_t *eh) {
 
     if (item->key == ev->keycode) {
       LOG_DBG("Text: %s, %d", item->text, ev->state);
-      struct zmk_behavior_binding_event event = {
-          .position = item->virtual_key_position,
-          .timestamp = ev->timestamp,
-      };
-      zmk_behavior_invoke_binding(&item->behavior, event, ev->state);
+      menu_invoke(item, ev);
       return ZMK_EV_EVENT_HANDLED;
     }
   }
 
   // Menu is active, process events by updating menu
   return ZMK_EV_EVENT_HANDLED;
+}
+
+// An open menu swallows every key, so close it once the keyboard goes idle
+static int menu_activity_state_changed_listener(const zmk_event_t *eh) {
+  struct zmk_activity_state_changed *ev = as_zmk_activity_state_changed(eh);
+  if (ev != NULL && ev->state != ZMK_ACTIVITY_ACTIVE) {
+    menu_close();
+  }
+  return ZMK_EV_EVENT_BUBBLE;
 }
 
 #endif /* DT_HAS_COMPAT_STATUS_OKAY(DT_DRV_COMPAT) */

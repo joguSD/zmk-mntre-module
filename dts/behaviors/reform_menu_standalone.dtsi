@@ -55,21 +55,25 @@
         text = "System Status       s";
         key = <S>;
         bindings = <&reform_sysctrl R_STATUS>;
+        close-on-select;
       };
       item8 {
         text = "Reset Keyboard      r";
         key = <R>;
         bindings = <&sys_reset>;
+        close-on-select;
       };
       item9 {
         text = "ZMK Studio Unlock   u";
         key = <U>;
         bindings = <&studio_unlock>;
+        close-on-select;
       };
       item10 {
         text = "USB Flashing Mode   x";
         key = <X>;
         bindings = <&bootloader>;
+        close-on-select;
       };
     };
   };

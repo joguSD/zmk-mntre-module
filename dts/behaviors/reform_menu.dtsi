@@ -25,16 +25,19 @@
         text = "Power On            1";
         key = <N1>;
         bindings = <&reform_sysctrl R_PWR_ON>;
+        close-on-select;
       };
       item2 {
         text = "Power Off           0";
         key = <N0>;
         bindings = <&reform_sysctrl R_PWR_OFF>;
+        close-on-select;
       };
       item3 {
         text = "Battery Status      b";
         key = <B>;
         bindings = <&reform_sysctrl R_BATT>;
+        close-on-select;
       };
       item4 {
         text = "Key Brightness-    F1";
@@ -70,26 +73,31 @@
         text = "Wake              SPC";
         key = <SPACE>;
         bindings = <&reform_sysctrl R_WAKE>;
+        close-on-select;
       };
       item11 {
         text = "System Status       s";
         key = <S>;
         bindings = <&reform_sysctrl R_STATUS>;
+        close-on-select;
       };
       item12 {
         text = "Reset Keyboard      r";
         key = <R>;
         bindings = <&sys_reset>;
+        close-on-select;
       };
       item13 {
         text = "ZMK Studio Unlock   u";
         key = <U>;
         bindings = <&studio_unlock>;
+        close-on-select;
       };
       item14 {
         text = "USB Flashing Mode   x";
         key = <X>;
         bindings = <&bootloader>;
+        close-on-select;
       };
     };
   };

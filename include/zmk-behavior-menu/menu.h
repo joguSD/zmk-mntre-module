@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
@@ -16,6 +17,7 @@ struct menu_item {
   uint16_t key;
   struct zmk_behavior_binding behavior;
   int32_t virtual_key_position;
+  bool close_on_select;
 };
 
 // Instance-specific Config struct (properties from device tree)
