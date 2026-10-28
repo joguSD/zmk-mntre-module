@@ -280,7 +280,7 @@ static int reform_sysctrl_cmd(const char *cmd, char *res_buf) {
  * Resend a power command until the sysctrl gives one of its replies; its UART
  * can hold leftover bytes, so the reply to an older command may come first.
  */
-static void reform_sysctrl_power_cmd(const char *cmd, const char *ack,
+static bool reform_sysctrl_power_cmd(const char *cmd, const char *ack,
                                      const char *alt_ack) {
   char res[REFORM_SYSCTRL_MSG_SIZE];
 
@@ -289,16 +289,19 @@ static void reform_sysctrl_power_cmd(const char *cmd, const char *ack,
     k_timepoint_t end = sys_timepoint_calc(K_MSEC(200));
     while (k_msgq_get(&uart_msgq, res, sys_timepoint_timeout(end)) == 0) {
       if (strcmp(res, ack) == 0 || (alt_ack && strcmp(res, alt_ack) == 0)) {
-        return;
+        return true;
       }
     }
   }
 
   LOG_WRN("Sysctrl power command not acknowledged: %s", cmd);
+  return false;
 }
 
 static void power_on_work_handler(struct k_work *work) {
-  reform_sysctrl_power_cmd("1p\r", "system: on", "system: already on");
+  if (reform_sysctrl_power_cmd("1p\r", "system: on", "system: already on")) {
+    display_request_render(NULL);
+  }
 }
 
 static void power_off_work_handler(struct k_work *work) {
