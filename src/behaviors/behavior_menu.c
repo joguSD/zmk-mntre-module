@@ -72,7 +72,7 @@ static void menu_close(void) {
   active_menu_dev = NULL;
   data->item_index = 0;
   data->highlight_index = 0;
-  display_request_render(NULL);
+  display_request_blank();
 }
 
 static int on_menu_binding_pressed(struct zmk_behavior_binding *binding,
@@ -215,8 +215,11 @@ static int menu_keycode_state_changed_listener(const zmk_event_t *eh) {
     return ZMK_EV_EVENT_HANDLED;
   }
 
-  // If menu is not active, do nothing and bubble
+  // If menu is not active, blank whatever is shown and bubble
   if (!active_menu_dev) {
+    if (ev->state) {
+      display_request_blank();
+    }
     return ZMK_EV_EVENT_BUBBLE;
   }
 

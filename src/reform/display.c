@@ -31,6 +31,7 @@ static struct display_buffer_descriptor desc = {
 static uint8_t logo[BUFFER_SIZE];
 static uint8_t display_buffer[BUFFER_SIZE];
 static atomic_ptr_t render_callback;
+static atomic_t display_lit;
 static struct character_matrix logo_matrix;
 
 K_SEM_DEFINE(render_sem, 0, 1);
@@ -68,6 +69,15 @@ void display_request_render(display_render_callback_t requested_callback) {
   k_sem_give(&render_sem);
 }
 
+void display_request_blank(void) {
+  if (!atomic_get(&display_lit)) {
+    return;
+  }
+
+  atomic_ptr_set(&render_callback, NULL);
+  k_sem_give(&render_sem);
+}
+
 static void reform_display_render_loop(void *p1, void *p2, void *p3) {
   if (!device_is_ready(display)) {
     LOG_ERR("Failed to find display device");
@@ -84,6 +94,7 @@ static void reform_display_render_loop(void *p1, void *p2, void *p3) {
   buffer_logo();
   buffer_show();
   display_blanking_off(display);
+  atomic_set(&display_lit, true);
 
   LOG_INF("Reform Display Initialized!");
 
@@ -95,6 +106,11 @@ static void reform_display_render_loop(void *p1, void *p2, void *p3) {
       buffer_clear();
       callback(display_buffer);
       buffer_show();
+      display_blanking_off(display);
+      atomic_set(&display_lit, true);
+    } else {
+      display_blanking_on(display);
+      atomic_set(&display_lit, false);
     }
   }
 }
@@ -117,17 +133,9 @@ int display_event_handler(const zmk_event_t *eh) {
     return -ENOTSUP;
   }
 
-  switch (ev->state) {
-  case ZMK_ACTIVITY_ACTIVE:
-    display_blanking_off(display);
-    break;
-  case ZMK_ACTIVITY_IDLE:
-  case ZMK_ACTIVITY_SLEEP:
-    display_blanking_on(display);
-    break;
-  default:
-    LOG_WRN("Unhandled activity state: %d", ev->state);
-    return -EINVAL;
+  // Typing never lights the panel; only a render does
+  if (ev->state != ZMK_ACTIVITY_ACTIVE) {
+    display_request_blank();
   }
   return 0;
 }
