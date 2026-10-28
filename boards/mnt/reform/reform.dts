@@ -40,7 +40,7 @@
     sleep_config: rp2040_sleep {
         compatible = "raspberrypi,rp2040-sleep";
         sleep-en0 = <0xf0941959>;
-        sleep-en1 = <0x6c23>;
+        sleep-en1 = <0x6f23>; /* stock mask + clk_peri_uart1, clk_sys_uart1 */
         wake-en0 = <0xf0fddf79>;
         wake-en1 = <0x7f27>;
         deep-sleep;
