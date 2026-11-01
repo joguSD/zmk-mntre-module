@@ -40,6 +40,16 @@ properties:
     default: 1213
     description: Y-axis coordinate output resolution.
 
+  x-physical-mm:
+    type: int
+    default: 120
+    description: Physical sensing width in mm.
+
+  y-physical-mm:
+    type: int
+    default: 76
+    description: Physical sensing height in mm.
+
   x-trim:
     type: int
     default: 20

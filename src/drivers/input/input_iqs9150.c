@@ -15,6 +15,10 @@
 #include <zephyr/input/input.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/sys/byteorder.h>
+#include <zephyr/sys/util.h>
+
+#include <reform/ptp_report.h>
 
 LOG_MODULE_REGISTER(iqs9150, CONFIG_INPUT_LOG_LEVEL);
 
@@ -32,7 +36,24 @@ LOG_MODULE_REGISTER(iqs9150, CONFIG_INPUT_LOG_LEVEL);
 #define IQS9150_OFF_GESTURE_Y 10
 #define IQS9150_OFF_1F_GESTURE 12
 #define IQS9150_OFF_2F_GESTURE 14
+#define IQS9150_MAX_FINGERS 7
+#define IQS9150_OFF_TRACKPAD_FLAGS 18
+#define IQS9150_OFF_FINGER_BASE 20
+#define IQS9150_FINGER_STRIDE 8
+#define IQS9150_FINGER_OFF_X 0
+#define IQS9150_FINGER_OFF_Y 2
+#define IQS9150_FINGER_NO_TOUCH 0xffff
+#define IQS9150_TOUCH_BLOCK_LEN                                                \
+  (IQS9150_OFF_FINGER_BASE + (IQS9150_MAX_FINGERS * IQS9150_FINGER_STRIDE))
+#define IQS9150_TP_FINGER_COUNT_MASK 0x000F
+#define IQS9150_TP_TOO_MANY_FINGERS 0x0020
+#define IQS9150_TP_CONFIDENCE_SHIFT 8
+
+#if IS_ENABLED(CONFIG_MNT_PTP)
+#define IQS9150_DATA_LEN IQS9150_TOUCH_BLOCK_LEN
+#else
 #define IQS9150_DATA_LEN 16
+#endif
 
 #define IQS9150_SYS_SNAP BIT(3)
 
@@ -75,6 +96,7 @@ LOG_MODULE_REGISTER(iqs9150, CONFIG_INPUT_LOG_LEVEL);
 
 struct iqs9150_data {
   const struct device *dev;
+  struct ptp_device ptp;
   struct k_work work;
   struct gpio_callback rdy_cb;
   enum {
@@ -199,6 +221,51 @@ struct iqs9150_config {
   uint8_t hardware_settings[10];
   uint8_t hardware_settings_len;
 };
+
+#if IS_ENABLED(CONFIG_MNT_PTP)
+static void iqs9150_ptp_translate(const uint8_t *block, struct ptp_state *out) {
+  memset(out, 0, sizeof(*out));
+
+  uint16_t flags = sys_get_le16(&block[IQS9150_OFF_TRACKPAD_FLAGS]);
+
+  if (flags & IQS9150_TP_TOO_MANY_FINGERS) {
+    return;
+  }
+
+  uint8_t reported = flags & IQS9150_TP_FINGER_COUNT_MASK;
+  if (reported == 0) {
+    return;
+  }
+
+  uint8_t limit = MIN(reported, PTP_MAX_CONTACTS);
+
+  uint8_t packed = 0;
+  for (uint8_t slot = 0; slot < IQS9150_MAX_FINGERS; slot++) {
+    if (packed == limit) {
+      break;
+    }
+
+    const uint8_t *finger =
+        &block[IQS9150_OFF_FINGER_BASE + (slot * IQS9150_FINGER_STRIDE)];
+    uint16_t x = sys_get_le16(&finger[IQS9150_FINGER_OFF_X]);
+    uint16_t y = sys_get_le16(&finger[IQS9150_FINGER_OFF_Y]);
+
+    if (x == IQS9150_FINGER_NO_TOUCH || y == IQS9150_FINGER_NO_TOUCH) {
+      continue;
+    }
+
+    struct ptp_contact *c = &out->contacts[packed];
+    c->x = x;
+    c->y = y;
+    c->contact_id = slot;
+    c->tip_switch = true;
+    c->confidence = (flags >> (IQS9150_TP_CONFIDENCE_SHIFT + slot)) & 1;
+    packed++;
+  }
+
+  out->contact_count = packed;
+}
+#endif /* CONFIG_MNT_PTP */
 
 /* I2C helpers for 16-bit register addresses */
 static int iqs9150_read(const struct i2c_dt_spec *i2c, uint16_t reg,
@@ -547,10 +614,19 @@ static void iqs9150_work_handler(struct k_work *work) {
         (int16_t)(buf[IQS9150_OFF_REL_X] | (buf[IQS9150_OFF_REL_X + 1] << 8));
     int16_t rel_y =
         (int16_t)(buf[IQS9150_OFF_REL_Y] | (buf[IQS9150_OFF_REL_Y + 1] << 8));
+#if IS_ENABLED(CONFIG_MNT_PTP)
+    struct ptp_state ptp;
+    iqs9150_ptp_translate(buf, &ptp);
+    if (ptp_emit(&data->ptp, &ptp)) {
+      break;
+    }
+#endif
+
     int16_t gest_x = (int16_t)(buf[IQS9150_OFF_GESTURE_X] |
                                (buf[IQS9150_OFF_GESTURE_X + 1] << 8));
     int16_t gest_y = (int16_t)(buf[IQS9150_OFF_GESTURE_Y] |
                                (buf[IQS9150_OFF_GESTURE_Y + 1] << 8));
+
     uint8_t gestures_1f = buf[IQS9150_OFF_1F_GESTURE];
     uint8_t gestures_1f_hi = buf[IQS9150_OFF_1F_GESTURE + 1];
     uint8_t gestures_2f = buf[IQS9150_OFF_2F_GESTURE];
@@ -646,12 +722,24 @@ static void iqs9150_rdy_callback(const struct device *port,
   k_work_submit(&data->work);
 }
 
+static struct ptp_device *iqs9150_ptp_device(const struct device *dev) {
+  struct iqs9150_data *data = dev->data;
+  return &data->ptp;
+}
+
+static const struct ptp_api iqs9150_ptp_api = {
+    .device = iqs9150_ptp_device,
+};
+
 static int iqs9150_init(const struct device *dev) {
   struct iqs9150_data *data = dev->data;
   const struct iqs9150_config *cfg = dev->config;
 
   data->dev = dev;
   data->state = IQS9150_RESET;
+#if IS_ENABLED(CONFIG_MNT_PTP)
+  ptp_device_init(&data->ptp);
+#endif
 
   if (!i2c_is_ready_dt(&cfg->i2c)) {
     LOG_ERR("I2C bus not ready");
@@ -813,6 +901,6 @@ static int iqs9150_init(const struct device *dev) {
   };                                                                           \
   DEVICE_DT_INST_DEFINE(n, iqs9150_init, NULL, &iqs9150_data_##n,              \
                         &iqs9150_config_##n, POST_KERNEL,                      \
-                        CONFIG_INPUT_INIT_PRIORITY, NULL);
+                        CONFIG_INPUT_INIT_PRIORITY, &iqs9150_ptp_api);
 
 DT_INST_FOREACH_STATUS_OKAY(IQS9150_INST)

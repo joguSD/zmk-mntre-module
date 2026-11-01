@@ -22,10 +22,13 @@
         compatible = "azoteq,iqs9150";
         reg = <0x56>;
         rdy-gpios = <&gpio0 29 GPIO_ACTIVE_LOW>;
+        max-fingers = <5>;
         total-rx = <20>;
         total-tx = <13>;
         x-resolution = <1825>;
         y-resolution = <1300>;
+        x-physical-mm = <74>;
+        y-physical-mm = <52>;
         alp-ati-compensation = [
             de 12 c4 12 cc 12 ce 12 d5 12 d7 12 d9 12
             e4 12 f2 12 e3 12 d3 12 d9 12 eb 12
@@ -101,6 +104,7 @@
     };
 
     chosen {
+        mnt,ptp = &trackpad;
         zmk,kscan = &kscan_composite;
     };
 };

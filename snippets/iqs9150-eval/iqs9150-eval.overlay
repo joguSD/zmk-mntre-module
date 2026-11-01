@@ -22,6 +22,8 @@
         compatible = "azoteq,iqs9150";
         reg = <0x56>;
         rdy-gpios = <&gpio0 29 GPIO_ACTIVE_LOW>;
+        max-fingers = <5>;
+        area-filter-disable;
         tap-enable;
         two-finger-tap-enable;
         scroll-enable;
@@ -71,6 +73,7 @@
     };
 
     chosen {
+        mnt,ptp = &trackpad;
         zmk,kscan = &kscan_composite;
     };
 };

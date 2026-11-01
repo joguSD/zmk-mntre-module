@@ -40,6 +40,40 @@ config ZMK_INPUT_PROCESSOR_INC_DEC
     default y
     depends on DT_HAS_ZMK_INPUT_PROCESSOR_INC_DEC_ENABLED
 
+DT_CHOSEN_MNT_PTP := mnt,ptp
+
+config MNT_PTP
+    bool
+
+config MNT_PTP_USB_HID
+    bool "PTP USB HID interface"
+    default y
+    depends on $(dt_chosen_enabled,$(DT_CHOSEN_MNT_PTP))
+    depends on USB_DEVICE_HID
+    select MNT_PTP
+
+config MNT_PTP_USB_RESET
+    bool "Reset PTP host state when USB resets"
+    default y
+    depends on MNT_PTP_USB_HID
+    depends on ZMK_USB
+
+config MNT_PTP_LAYER_INHIBIT
+    bool "Suppress PTP reporting while a ZMK layer claims the trackpad"
+    default y
+    depends on MNT_PTP
+    depends on ZMK_POINTING
+
+config MNT_PTP_USB_HID_INSTANCE
+    int "USB HID instance index for the PTP interface"
+    default 1
+    depends on MNT_PTP_USB_HID
+
+config MNT_PTP_USB_HID_INIT_PRIORITY
+    int "PTP USB HID init priority"
+    default 95
+    depends on MNT_PTP_USB_HID
+
 config RP2040_SLEEP
     bool "RP2040 sleep mode driver"
     default y
